@@ -3,30 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社區好物團購與到貨通知助手</title>
+    <title>社區美食團購</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 font-sans pb-16">
 
-    <!-- 頂部資訊區 -->
-    <header class="bg-slate-800 text-white py-8 shadow-md">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="flex items-center space-x-2">
-                <span class="bg-slate-700 text-slate-200 text-xs px-3 py-1 rounded font-medium">社區限時專案</span>
-                <span class="text-xs bg-slate-600 text-slate-200 px-2 py-1 rounded">廠商專屬團購價</span>
+    <!-- 頂部 Header -->
+    <header class="bg-slate-800 text-white py-6 shadow-md">
+        <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+            <div>
+                <span class="bg-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded font-medium">社區限時專案</span>
+                <h1 class="text-2xl sm:text-3xl font-bold mt-1 tracking-tight">社區美食團購</h1>
+                <p class="text-slate-300 text-xs sm:text-sm mt-0.5">廠商談定固定團購價 ｜ 取貨地點：社區管理室前</p>
             </div>
-            <h1 class="text-3xl font-bold mt-2 tracking-tight">全台名店巡禮 - 熱門美食社區團購</h1>
-            <p class="text-slate-300 text-sm mt-1">取貨地點：社區管理室前 ｜ 廠商談定固定優惠價，團主統一集單向廠商訂購</p>
+            <!-- 切換角色按鈕 -->
+            <button onclick="toggleAdminView()" id="adminToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition">
+                團主登入
+            </button>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- 住戶跟團下單區 -->
+        <!-- 住戶跟團下單區 (前台) -->
         <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
             <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">我要跟團預購</h2>
-            <form id="orderForm" class="space-y-4">
+            <form id="orderForm" class="space-y-5">
+                
+                <!-- 住戶資料 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">住戶姓名 / 戶號 *</label>
@@ -38,56 +43,87 @@
                     </div>
                 </div>
 
-                <!-- 品項選購與算價機 -->
-                <div class="border-t border-slate-100 pt-4 space-y-3">
-                    <label class="block text-sm font-semibold text-slate-700">選擇團購品項：</label>
-                    
-                    <!-- 主商品 -->
-                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-200">
-                        <div>
-                            <p class="font-bold text-slate-800 text-base">主打好物：全台排隊名店 - 嚴選爆漿禮盒</p>
-                            <p class="text-xs text-slate-500 mt-0.5">專屬團購優惠價：$280 / 件 (原價 $350)</p>
+                <!-- 複選多品項區 -->
+                <div class="border-t border-slate-100 pt-4 space-y-4">
+                    <label class="block text-sm font-semibold text-slate-700">選擇團購品項（可多選）：</label>
+
+                    <!-- 品項 1：全家早餐貝果 -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-slate-800">全家極鬆軟早餐貝果</p>
+                                <p class="text-xs text-slate-500 mt-0.5">低溫發酵外Q內軟，早餐最佳選擇！團購價 $35 / 個 (原價 $45)</p>
+                            </div>
+                            <span class="text-sm font-bold text-slate-700">$35 / 個</span>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button type="button" onclick="adjustQty(-1)" class="w-8 h-8 rounded bg-white text-slate-800 font-bold shadow-sm hover:bg-slate-100 border border-slate-300">-</button>
-                            <span id="orderQty" class="font-bold text-lg w-6 text-center text-slate-800">1</span>
-                            <button type="button" onclick="adjustQty(1)" class="w-8 h-8 rounded bg-white text-slate-800 font-bold shadow-sm hover:bg-slate-100 border border-slate-300">+</button>
+                        <div class="flex flex-wrap items-center gap-4 pt-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-slate-600 font-medium">口味：</span>
+                                <select id="bagelFlavor" class="border border-slate-300 rounded px-2 py-1 text-xs outline-none">
+                                    <option value="藍莓乳酪">藍莓乳酪</option>
+                                    <option value="經典原味">經典原味</option>
+                                    <option value="榛果巧克力">榛果巧克力</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-slate-600 font-medium">數量：</span>
+                                <button type="button" onclick="adjustItemQty('bagel', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">-</button>
+                                <span id="bagelQty" class="w-6 text-center font-bold text-sm">0</span>
+                                <button type="button" onclick="adjustItemQty('bagel', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">+</button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 限量加購品 -->
+                    <!-- 品項 2：產地直送大湖草莓盒 -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-slate-800">產地直送大湖草莓盒 (大果 300g)</p>
+                                <p class="text-xs text-slate-500 mt-0.5">當日採收冷藏配送，果肉紮實香甜多汁。團購價 $220 / 盒 (原價 $280)</p>
+                            </div>
+                            <span class="text-sm font-bold text-slate-700">$220 / 盒</span>
+                        </div>
+                        <div class="flex items-center space-x-2 justify-end pt-1">
+                            <span class="text-xs text-slate-600 font-medium">數量：</span>
+                            <button type="button" onclick="adjustItemQty('strawberry', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">-</button>
+                            <span id="strawberryQty" class="w-6 text-center font-bold text-sm">0</span>
+                            <button type="button" onclick="adjustItemQty('strawberry', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">+</button>
+                        </div>
+                    </div>
+
+                    <!-- 加購品：保冷袋 -->
                     <div class="flex justify-between items-center bg-slate-50 p-3.5 rounded-lg border border-slate-200">
                         <div class="flex items-center space-x-2">
-                            <input type="checkbox" id="addOption" onchange="updateUI()" class="w-4 h-4 text-slate-600 rounded focus:ring-slate-500">
-                            <label for="addOption" class="text-sm font-medium text-slate-700 cursor-pointer">
-                                限量加購：專屬質感保冷袋 (+ $50 / 個)
+                            <input type="checkbox" id="addCooler" onchange="updateUI()" class="w-4 h-4 text-slate-600 rounded focus:ring-slate-500">
+                            <label for="addCooler" class="text-sm font-medium text-slate-700 cursor-pointer">
+                                限量加購：加厚質感保冷袋 (+ $50 / 個)
                             </label>
                         </div>
                     </div>
                 </div>
 
+                <!-- 取貨與通知偏好 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">偏好取貨時段</label>
                         <select id="pickupTime" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500">
-                            <option>平日傍晚 17:00 - 19:00 (下班第1波)</option>
-                            <option>平日晚間 19:00 - 21:00 (下班第2波)</option>
-                            <option>週末全天 (管理室代收領取)</option>
+                            <option value="平日 17:00 - 20:00">平日 17:00 - 20:00</option>
+                            <option value="週末全天 (管理室代收)">週末全天 (管理室代收)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">到貨通知管道</label>
                         <select id="notifyType" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500">
-                            <option value="SMS 簡訊">SMS 簡訊通知</option>
-                            <option value="LINE 群組">LINE 社區群組私訊</option>
-                            <option value="電話語音">管理員電話通知</option>
+                            <option value="簡訊">簡訊通知</option>
+                            <option value="LINE群組">LINE群組通知</option>
+                            <option value="電話通知">電話通知</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="bg-slate-100 p-4 rounded-lg flex justify-between items-center text-sm border border-slate-200">
-                    <span class="text-slate-600">固定團購單價：<strong class="text-slate-800 font-bold">$280</strong> / 件</span>
-                    <span class="text-slate-700">預估跟團總額：<strong id="totalPricePreview" class="text-slate-900 text-2xl font-bold">$280</strong> 元</span>
+                <div class="bg-slate-100 p-4 rounded-lg flex justify-between items-center border border-slate-200">
+                    <span class="text-slate-600 text-sm">總品項統計：<strong id="itemSummaryPreview" class="text-slate-800">未選擇品項</strong></span>
+                    <span class="text-slate-700 text-sm">預估總金額：<strong id="totalPricePreview" class="text-slate-900 text-2xl font-bold">$0</strong> 元</span>
                 </div>
 
                 <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-lg shadow transition">
@@ -104,9 +140,9 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input type="text" id="reviewName" required placeholder="您的暱稱 / 戶號 (例：C棟 媽媽)" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
                     <select id="reviewRating" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
-                        <option value="5">評分：5 顆星 (非常推薦)</option>
-                        <option value="4">評分：4 顆星 (滿意)</option>
-                        <option value="3">評分：3 顆星 (普通)</option>
+                        <option value="5">★ ★ ★ ★ ★ (非常推薦)</option>
+                        <option value="4">★ ★ ★ ★ ☆ (滿意)</option>
+                        <option value="3">★ ★ ★ ☆ ☆ (普通)</option>
                     </select>
                 </div>
                 <textarea id="reviewText" required rows="2" placeholder="撰寫品嚐心得或開箱評價，提供鄰居跟團參考..." class="w-full border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500"></textarea>
@@ -120,213 +156,272 @@
             </div>
         </section>
 
-        <!-- 團主後台與物流管理區 -->
-        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pb-2 border-b border-slate-100">
-                <h2 class="text-xl font-bold text-slate-900">跟團名單與團主物流管理台</h2>
-                <button onclick="copyLineSummary()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded shadow-sm transition">
-                    一鍵複製 LINE 廣播格式
-                </button>
+        <!-- 團主後台與物流管理區 (預設隱藏，需登入) -->
+        <section id="adminSection" class="hidden bg-slate-900 text-white rounded-xl shadow-md p-6 border border-slate-800">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pb-3 border-b border-slate-700">
+                <div>
+                    <span class="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded font-bold">團主管理模式</span>
+                    <h2 class="text-xl font-bold mt-1">跟團名單與物流對帳後台</h2>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="copyLineSummary()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded border border-slate-600 transition">
+                        一鍵複製 LINE 廣播格式
+                    </button>
+                    <button onclick="logoutAdmin()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded transition">
+                        退出管理
+                    </button>
+                </div>
             </div>
 
             <!-- 總量統計卡片 -->
             <div class="grid grid-cols-2 gap-4 mb-4 text-center">
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                    <p class="text-xs text-slate-500 font-semibold">社區訂購總份數</p>
-                    <p id="statTotalQty" class="text-2xl font-bold text-slate-800 mt-1">0 件</p>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <p class="text-xs text-slate-400 font-semibold">社區訂購總份數</p>
+                    <p id="statTotalQty" class="text-2xl font-bold text-emerald-400 mt-1">0 件</p>
                 </div>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                    <p class="text-xs text-slate-500 font-semibold">團購累積總金額</p>
-                    <p id="statTotalPrice" class="text-2xl font-bold text-slate-800 mt-1">$0 元</p>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <p class="text-xs text-slate-400 font-semibold">團購累積總金額</p>
+                    <p id="statTotalPrice" class="text-2xl font-bold text-emerald-400 mt-1">$0 元</p>
                 </div>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-800 border-b border-slate-200">
-                            <th class="p-3 font-semibold">跟團住戶</th>
-                            <th class="p-3 font-semibold">數量 / 加購</th>
+                        <tr class="bg-slate-800 text-slate-300 border-b border-slate-700">
+                            <th class="p-3 font-semibold">住戶</th>
+                            <th class="p-3 font-semibold">訂購明細</th>
                             <th class="p-3 font-semibold">應付金額</th>
                             <th class="p-3 font-semibold">通知管道</th>
-                            <th class="p-3 font-semibold">狀態標記與發送通知</th>
+                            <th class="p-3 font-semibold">對帳與物流狀態</th>
                             <th class="p-3 font-semibold">操作</th>
                         </tr>
                     </thead>
-                    <tbody id="orderTableBody" class="divide-y divide-slate-100">
+                    <tbody id="orderTableBody" class="divide-y divide-slate-800">
                         <!-- 動態渲染訂單 -->
                     </tbody>
                 </table>
             </div>
         </section>
+
     </main>
 
     <script>
-        const UNIT_PRICE = 280;
+        const PRICE_BAGEL = 35;
+        const PRICE_STRAWBERRY = 220;
+        const PRICE_COOLER = 50;
 
-        // 預設資料
-        let orders = JSON.parse(localStorage.getItem('community_groupbuy_orders')) || [
-            { id: 1, name: 'B棟 5樓 陳小姐', phone: '0911222333', qty: 2, hasAddon: true, time: '平日傍晚 17:00 - 19:00', notify: 'LINE 群組', paid: true, picked: false },
-            { id: 2, name: 'A棟 12樓 林先生', phone: '0988777666', qty: 3, hasAddon: false, time: '平日晚間 19:00 - 21:00', notify: 'SMS 簡訊', paid: false, picked: false }
+        let isAdmin = false;
+        let bagelQty = 0;
+        let strawberryQty = 0;
+
+        // 預設訂單資料
+        let orders = JSON.parse(localStorage.getItem('community_groupbuy_orders_v2')) || [
+            { id: 1, name: 'B棟 5樓 陳小姐', phone: '0911222333', details: '貝果(藍莓乳酪)x2, 草莓盒x1, 保冷袋', price: 340, time: '平日 17:00 - 20:00', notify: 'LINE群組', paid: true, picked: false },
+            { id: 2, name: 'A棟 12樓 林先生', phone: '0988777666', details: '草莓盒x2', price: 440, time: '週末全天 (管理室代收)', notify: '簡訊', paid: false, picked: false }
         ];
 
-        let reviews = JSON.parse(localStorage.getItem('community_groupbuy_reviews')) || [
-            { name: 'C棟 3樓 媽媽', rating: '5', text: '這家爆漿禮盒上次買過非常滿意，這次回購兩件給家人吃！' },
-            { name: 'A棟 主委', rating: '4', text: '口感不錯，包裝也很精緻，推薦大家跟團。' }
+        // 預設評價資料
+        let reviews = JSON.parse(localStorage.getItem('community_groupbuy_reviews_v2')) || [
+            { name: 'C棟 媽媽', rating: 5, text: '藍莓乳酪貝果微波加熱後超級軟綿，小朋友非常喜歡！' },
+            { name: 'A棟 主委', rating: 4, text: '草莓非常新鮮大顆，品質很棒，期待下次再開團。' }
         ];
 
-        let currentQty = 1;
-
-        function adjustQty(amount) {
-            currentQty = Math.max(1, currentQty + amount);
-            document.getElementById('orderQty').innerText = currentQty;
+        function adjustItemQty(item, amount) {
+            if (item === 'bagel') {
+                bagelQty = Math.max(0, bagelQty + amount);
+                document.getElementById('bagelQty').innerText = bagelQty;
+            } else if (item === 'strawberry') {
+                strawberryQty = Math.max(0, strawberryQty + amount);
+                document.getElementById('strawberryQty').innerText = strawberryQty;
+            }
             updateUI();
         }
 
         function updateUI() {
-            const hasAddon = document.getElementById('addOption').checked;
-            const estimatedTotal = (currentQty * UNIT_PRICE) + (hasAddon ? 50 : 0);
-            document.getElementById('totalPricePreview').innerText = `$${estimatedTotal}`;
+            const hasCooler = document.getElementById('addCooler').checked;
+            const bagelFlavor = document.getElementById('bagelFlavor').value;
+            
+            let total = (bagelQty * PRICE_BAGEL) + (strawberryQty * PRICE_STRAWBERRY) + (hasCooler ? PRICE_COOLER : 0);
+            
+            let summaryItems = [];
+            if (bagelQty > 0) summaryItems.push(`貝果(${bagelFlavor})x${bagelQty}`);
+            if (strawberryQty > 0) summaryItems.push(`草莓盒x${strawberryQty}`);
+            if (hasCooler) summaryItems.push(`保冷袋`);
 
-            // 計算統計總量
-            const totalQty = orders.reduce((sum, order) => sum + order.qty, 0);
-            const totalPrice = orders.reduce((sum, order) => sum + (order.qty * UNIT_PRICE) + (order.hasAddon ? 50 : 0), 0);
+            document.getElementById('itemSummaryPreview').innerText = summaryItems.length > 0 ? summaryItems.join(', ') : '未選擇品項';
+            document.getElementById('totalPricePreview').innerText = `$${total}`;
 
-            document.getElementById('statTotalQty').innerText = `${totalQty} 件`;
-            document.getElementById('statTotalPrice').innerText = `$${totalPrice} 元`;
+            // 計算團主後台總量
+            const totalItemsCount = orders.reduce((sum, o) => sum + o.price, 0); // 簡單統計
+            const totalPriceAll = orders.reduce((sum, o) => sum + o.price, 0);
 
-            // 渲染表格
+            document.getElementById('statTotalQty').innerText = `${orders.length} 筆訂單`;
+            document.getElementById('statTotalPrice').innerText = `$${totalPriceAll} 元`;
+
+            // 渲染後台表格
             const tbody = document.getElementById('orderTableBody');
             tbody.innerHTML = '';
 
             orders.forEach(order => {
-                const orderPrice = (order.qty * UNIT_PRICE) + (order.hasAddon ? 50 : 0);
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition';
+                tr.className = 'hover:bg-slate-800/50 transition';
                 tr.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-800">
+                    <td class="p-3 font-semibold text-slate-100">
                         ${order.name}
                         <br><span class="text-xs text-slate-400 font-normal">${order.phone}</span>
                     </td>
-                    <td class="p-3 font-bold text-slate-700">
-                        ${order.qty} 件 ${order.hasAddon ? '<span class="text-xs bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-normal ml-1">+保冷袋</span>' : ''}
-                    </td>
-                    <td class="p-3 text-slate-800 font-bold">$${orderPrice}</td>
-                    <td class="p-3 text-xs text-slate-500">${order.notify || 'SMS 簡訊'}</td>
+                    <td class="p-3 text-xs text-slate-300 font-medium">${order.details}</td>
+                    <td class="p-3 text-emerald-400 font-bold">$${order.price}</td>
+                    <td class="p-3 text-xs text-slate-400">${order.notify}</td>
                     <td class="p-3 space-x-1 space-y-1">
-                        <button onclick="toggleStatus(${order.id}, 'paid')" class="px-2 py-1 text-xs font-bold rounded ${order.paid ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
+                        <button onclick="toggleStatus(${order.id}, 'paid')" class="px-2 py-1 text-xs font-bold rounded ${order.paid ? 'bg-emerald-900 text-emerald-200' : 'bg-rose-900 text-rose-200'}">
                             ${order.paid ? '已付款' : '未付款'}
                         </button>
-                        <button onclick="toggleStatus(${order.id}, 'picked')" class="px-2 py-1 text-xs font-bold rounded ${order.picked ? 'bg-sky-100 text-sky-800' : 'bg-slate-200 text-slate-600'}">
+                        <button onclick="toggleStatus(${order.id}, 'picked')" class="px-2 py-1 text-xs font-bold rounded ${order.picked ? 'bg-sky-900 text-sky-200' : 'bg-slate-700 text-slate-300'}">
                             ${order.picked ? '已領貨' : '待領貨'}
                         </button>
-                        <button onclick="sendArrivalNotice('${order.name}', '${order.notify || 'SMS 簡訊'}')" class="px-2 py-1 text-xs bg-slate-200 text-slate-800 hover:bg-slate-300 rounded font-medium transition">
-                            發送到貨提醒
+                        <button onclick="sendArrivalNotice('${order.name}', '${order.notify}')" class="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 rounded font-medium transition">
+                            提醒
                         </button>
                     </td>
                     <td class="p-3">
-                        <button onclick="deleteOrder(${order.id})" class="text-rose-600 hover:text-rose-800 text-xs font-medium">刪除</button>
+                        <button onclick="deleteOrder(${order.id})" class="text-rose-400 hover:text-rose-300 text-xs">刪除</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // 渲染評價
             renderReviews();
-
-            // 寫入 LocalStorage
-            localStorage.setItem('community_groupbuy_orders', JSON.stringify(orders));
+            localStorage.setItem('community_groupbuy_orders_v2', JSON.stringify(orders));
         }
 
-        // 送出訂單
+        // 提交跟團訂單
         document.getElementById('orderForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('userName').value;
-            const phone = document.getElementById('userPhone').value;
-            const time = document.getElementById('pickupTime').value;
-            const notify = document.getElementById('notifyType').value;
-            const hasAddon = document.getElementById('addOption').checked;
+            const hasCooler = document.getElementById('addCooler').checked;
+            const bagelFlavor = document.getElementById('bagelFlavor').value;
+
+            if (bagelQty === 0 && strawberryQty === 0 && !hasCooler) {
+                alert('請至少選擇一種團購品項或加購品！');
+                return;
+            }
+
+            let summaryItems = [];
+            if (bagelQty > 0) summaryItems.push(`貝果(${bagelFlavor})x${bagelQty}`);
+            if (strawberryQty > 0) summaryItems.push(`草莓盒x${strawberryQty}`);
+            if (hasCooler) summaryItems.push(`保冷袋`);
+
+            const total = (bagelQty * PRICE_BAGEL) + (strawberryQty * PRICE_STRAWBERRY) + (hasCooler ? PRICE_COOLER : 0);
 
             const newOrder = {
                 id: Date.now(),
-                name: name,
-                phone: phone,
-                qty: currentQty,
-                hasAddon: hasAddon,
-                time: time,
-                notify: notify,
+                name: document.getElementById('userName').value,
+                phone: document.getElementById('userPhone').value,
+                details: summaryItems.join(', '),
+                price: total,
+                time: document.getElementById('pickupTime').value,
+                notify: document.getElementById('notifyType').value,
                 paid: false,
                 picked: false
             };
 
             orders.push(newOrder);
             document.getElementById('orderForm').reset();
-            currentQty = 1;
-            document.getElementById('orderQty').innerText = currentQty;
+            bagelQty = 0;
+            strawberryQty = 0;
+            document.getElementById('bagelQty').innerText = '0';
+            document.getElementById('strawberryQty').innerText = '0';
             updateUI();
             alert('已成功登記跟團預購！');
         });
 
-        // 新增評價
+        // 團主權限驗證
+        function toggleAdminView() {
+            if (isAdmin) {
+                logoutAdmin();
+                return;
+            }
+            const pwd = prompt('請輸入團主管理密碼 (預設：1234)：');
+            if (pwd === '1234') {
+                isAdmin = true;
+                document.getElementById('adminSection').classList.remove('hidden');
+                document.getElementById('adminToggleBtn').innerText = '退出團主模式';
+                document.getElementById('adminToggleBtn').className = 'bg-rose-700 hover:bg-rose-600 text-white text-xs px-3 py-2 rounded transition';
+            } else if (pwd !== null) {
+                alert('密碼錯誤！');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('adminToggleBtn').innerText = '團主登入';
+            document.getElementById('adminToggleBtn').className = 'bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition';
+        }
+
+        // 發送評價
         function addReview(e) {
             e.preventDefault();
             const name = document.getElementById('reviewName').value;
-            const rating = document.getElementById('reviewRating').value;
+            const rating = parseInt(document.getElementById('reviewRating').value);
             const text = document.getElementById('reviewText').value;
 
             reviews.unshift({ name, rating, text });
-            localStorage.setItem('community_groupbuy_reviews', JSON.stringify(reviews));
+            localStorage.setItem('community_groupbuy_reviews_v2', JSON.stringify(reviews));
             document.getElementById('reviewForm').reset();
             renderReviews();
         }
 
         function renderReviews() {
             const list = document.getElementById('reviewsList');
-            list.innerHTML = reviews.map(r => `
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-bold text-slate-800">${r.name}</span>
-                        <span class="text-xs text-slate-500 font-semibold">評分：${r.rating} 顆星</span>
+            list.innerHTML = reviews.map(r => {
+                const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                return `
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800">${r.name}</span>
+                            <span class="text-xs text-amber-500 font-bold">${stars}</span>
+                        </div>
+                        <p class="text-slate-600 text-xs">${r.text}</p>
                     </div>
-                    <p class="text-slate-600">${r.text}</p>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function toggleStatus(id, type) {
-            orders = orders.map(order => order.id === id ? { ...order, [type]: !order[type] } : order);
+            orders = orders.map(o => o.id === id ? { ...o, [type]: !o[type] } : o);
             updateUI();
         }
 
         function sendArrivalNotice(name, notifyMethod) {
-            alert(`【發送到貨提醒】\n已透過「${notifyMethod}」通知 ${name}：\n「您預購的社區團購商品已抵達管理室，請抽空前來領取！」`);
+            alert(`【發送到貨提醒】\n已透過「${notifyMethod}」發送通知給 ${name}：\n「您訂購的美食商品已抵達管理室，請抽空前來領取！」`);
         }
 
         function deleteOrder(id) {
             if (confirm('確定要刪除這筆跟團紀錄嗎？')) {
-                orders = orders.filter(order => order.id !== id);
+                orders = orders.filter(o => o.id !== id);
                 updateUI();
             }
         }
 
         function copyLineSummary() {
-            let text = `【團購到貨通知與領貨清單】\n`;
+            let text = `【社區美食團購 - 到貨通知與領貨清單】\n`;
             text += `取貨地點：社區管理室前\n`;
             text += `------------------------------\n`;
             
             orders.forEach(o => {
                 const statusPaid = o.paid ? '已付' : '未付';
                 const statusPicked = o.picked ? '已領' : '待領';
-                text += `• ${o.name}：${o.qty}件 / [${statusPaid}] / [${statusPicked}]\n`;
+                text += `• ${o.name}：${o.details} / [${statusPaid}] / [${statusPicked}]\n`;
             });
 
-            text += `------------------------------\n請大家抽空前往領取，感謝合作！`;
+            text += `------------------------------\n請大家抽空前來領取，感謝合作！`;
 
             navigator.clipboard.writeText(text);
-            alert('已成功複製格式化文字！可以直接貼到社區 LINE 群組發布通知。');
+            alert('已成功複製廣播格式文字！可直接貼至社區 LINE 群組。');
         }
 
-        // 初始化
         updateUI();
     </script>
 </body>
