@@ -13,9 +13,9 @@
     <header class="bg-slate-800 text-white py-6 shadow-md">
         <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
             <div>
-                <span class="bg-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded font-medium">社區限時專案</span>
+                <span class="bg-amber-500 text-slate-900 font-bold text-xs px-2.5 py-1 rounded">社區獨家回饋價</span>
                 <h1 class="text-2xl sm:text-3xl font-bold mt-1 tracking-tight">社區美食團購</h1>
-                <p class="text-slate-300 text-xs sm:text-sm mt-0.5">廠商談定固定團購價 ｜ 取貨地點：社區管理室前</p>
+                <p class="text-slate-300 text-xs sm:text-sm mt-0.5">嚴選熱門排隊美食 ｜ 專屬社區免費直送 ｜ 取貨地點：社區管理室前</p>
             </div>
             <!-- 切換角色按鈕 -->
             <button onclick="toggleAdminView()" id="adminToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition">
@@ -35,31 +35,37 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">住戶姓名 / 戶號 *</label>
-                        <input type="text" id="userName" required placeholder="例：A棟 8樓 張先生" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-slate-500 outline-none">
+                        <input type="text" id="userName" required placeholder="例：A棟 8樓 張先生" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-slate-500 outline-none text-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">聯絡電話 *</label>
-                        <input type="tel" id="userPhone" required placeholder="例：0912-345678" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-slate-500 outline-none">
+                        <input type="tel" id="userPhone" required placeholder="例：0912-345678" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-slate-500 outline-none text-sm">
                     </div>
                 </div>
 
                 <!-- 複選多品項區 -->
                 <div class="border-t border-slate-100 pt-4 space-y-4">
-                    <label class="block text-sm font-semibold text-slate-700">選擇團購品項（可多選）：</label>
+                    <label class="block text-sm font-semibold text-slate-700">選擇團購品項（可選購多種品項與數量）：</label>
 
-                    <!-- 品項 1：全家早餐貝果 -->
+                    <!-- 品項 1：鬆軟日式貝果 -->
                     <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="font-bold text-slate-800">全家極鬆軟早餐貝果</p>
-                                <p class="text-xs text-slate-500 mt-0.5">低溫發酵外Q內軟，早餐最佳選擇！團購價 $35 / 個 (原價 $45)</p>
+                                <div class="flex items-center space-x-2">
+                                    <p class="font-bold text-slate-800 text-base">鬆軟日式貝果</p>
+                                    <span class="bg-rose-100 text-rose-700 text-xs px-2 py-0.5 rounded font-bold">烘焙金獎肯定</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    採用日本進口麵粉與 18 小時低溫湯種熟成工法，呈現極致鬆軟且具 Q 彈咬勁的完美口感！榮獲年度團購美食金獎，熱銷突破十萬顆的人氣早餐首選。
+                                </p>
                             </div>
-                            <span class="text-sm font-bold text-slate-700">$35 / 個</span>
+                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$35 / 個</span>
                         </div>
-                        <div class="flex flex-wrap items-center gap-4 pt-1">
+                        <div class="flex flex-wrap items-center gap-4 pt-1 border-t border-slate-200/60">
                             <div class="flex items-center space-x-2">
-                                <span class="text-xs text-slate-600 font-medium">口味：</span>
-                                <select id="bagelFlavor" class="border border-slate-300 rounded px-2 py-1 text-xs outline-none">
+                                <span class="text-xs text-slate-600 font-medium">口味選擇：</span>
+                                <select id="bagelFlavor" class="border border-slate-300 rounded px-2 py-1 text-xs outline-none bg-white">
+                                    <option value="伯爵茶">伯爵茶 (新上市人氣款)</option>
                                     <option value="藍莓乳酪">藍莓乳酪</option>
                                     <option value="經典原味">經典原味</option>
                                     <option value="榛果巧克力">榛果巧克力</option>
@@ -67,9 +73,9 @@
                             </div>
                             <div class="flex items-center space-x-2">
                                 <span class="text-xs text-slate-600 font-medium">數量：</span>
-                                <button type="button" onclick="adjustItemQty('bagel', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">-</button>
+                                <button type="button" onclick="adjustItemQty('bagel', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
                                 <span id="bagelQty" class="w-6 text-center font-bold text-sm">0</span>
-                                <button type="button" onclick="adjustItemQty('bagel', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">+</button>
+                                <button type="button" onclick="adjustItemQty('bagel', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
                             </div>
                         </div>
                     </div>
@@ -78,16 +84,65 @@
                     <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="font-bold text-slate-800">產地直送大湖草莓盒 (大果 300g)</p>
-                                <p class="text-xs text-slate-500 mt-0.5">當日採收冷藏配送，果肉紮實香甜多汁。團購價 $220 / 盒 (原價 $280)</p>
+                                <div class="flex items-center space-x-2">
+                                    <p class="font-bold text-slate-800 text-base">產地直送大湖草莓盒 (300g)</p>
+                                    <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">當日晨採</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    苗栗大湖果園清晨新鮮採收，全程冷藏專車直達社區！果實紅潤結實、鮮嫩多汁，帶有獨特的濃郁草莓自然香氣，給您最頂級的鮮採甜美滋味。
+                                </p>
                             </div>
-                            <span class="text-sm font-bold text-slate-700">$220 / 盒</span>
+                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$220 / 盒</span>
                         </div>
-                        <div class="flex items-center space-x-2 justify-end pt-1">
+                        <div class="flex items-center space-x-2 justify-end pt-1 border-t border-slate-200/60">
                             <span class="text-xs text-slate-600 font-medium">數量：</span>
-                            <button type="button" onclick="adjustItemQty('strawberry', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">-</button>
+                            <button type="button" onclick="adjustItemQty('strawberry', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
                             <span id="strawberryQty" class="w-6 text-center font-bold text-sm">0</span>
-                            <button type="button" onclick="adjustItemQty('strawberry', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm">+</button>
+                            <button type="button" onclick="adjustItemQty('strawberry', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
+                        </div>
+                    </div>
+
+                    <!-- 品項 3：職人手工手撕千層吐司 -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <p class="font-bold text-slate-800 text-base">職人手工手撕千層吐司</p>
+                                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-bold">回購率 No.1</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    嚴選法國發酵奶油與優質鮮乳，層層堆疊出上百層酥脆又有彈性的豐富口感。出爐濃郁奶香撲鼻，輕輕一撕層次分明，大人小孩都愛不釋手。
+                                </p>
+                            </div>
+                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$130 / 條</span>
+                        </div>
+                        <div class="flex items-center space-x-2 justify-end pt-1 border-t border-slate-200/60">
+                            <span class="text-xs text-slate-600 font-medium">數量：</span>
+                            <button type="button" onclick="adjustItemQty('toast', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
+                            <span id="toastQty" class="w-6 text-center font-bold text-sm">0</span>
+                            <button type="button" onclick="adjustItemQty('toast', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
+                        </div>
+                    </div>
+
+                    <!-- 品項 4：秘製老滷香辣鴨翅組 -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <p class="font-bold text-slate-800 text-base">秘製老滷香辣鴨翅組 (4入/包)</p>
+                                    <span class="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded font-bold">下酒追劇神物</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                    遵循古法使用數十種漢方香料與數十年老滷汁慢火熬煮！肉質紮實入味、皮 Q 肉嫩，帶點微微麻辣甘甜感，是居家宵夜與下酒追劇的最強美食。
+                                </p>
+                            </div>
+                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$160 / 包</span>
+                        </div>
+                        <div class="flex items-center space-x-2 justify-end pt-1 border-t border-slate-200/60">
+                            <span class="text-xs text-slate-600 font-medium">數量：</span>
+                            <button type="button" onclick="adjustItemQty('duck', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
+                            <span id="duckQty" class="w-6 text-center font-bold text-sm">0</span>
+                            <button type="button" onclick="adjustItemQty('duck', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
                         </div>
                     </div>
 
@@ -96,7 +151,7 @@
                         <div class="flex items-center space-x-2">
                             <input type="checkbox" id="addCooler" onchange="updateUI()" class="w-4 h-4 text-slate-600 rounded focus:ring-slate-500">
                             <label for="addCooler" class="text-sm font-medium text-slate-700 cursor-pointer">
-                                限量加購：加厚質感保冷袋 (+ $50 / 個)
+                                超值加購：加厚質感長效保冷袋 (+ $50 / 個)
                             </label>
                         </div>
                     </div>
@@ -106,14 +161,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">偏好取貨時段</label>
-                        <select id="pickupTime" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500">
-                            <option value="平日 17:00 - 20:00">平日 17:00 - 20:00</option>
-                            <option value="週末全天 (管理室代收)">週末全天 (管理室代收)</option>
+                        <select id="pickupTime" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500 text-sm">
+                            <option value="平日 17:00 - 19:00">平日 17:00 - 19:00</option>
+                            <option value="平日 19:00 - 21:00">平日 19:00 - 21:00</option>
+                            <option value="週末 10:00 - 12:00">週末 10:00 - 12:00</option>
+                            <option value="週末 14:00 - 17:00">週末 14:00 - 17:00</option>
+                            <option value="管理室代收 (全天)">管理室代收 (全天)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">到貨通知管道</label>
-                        <select id="notifyType" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500">
+                        <select id="notifyType" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500 text-sm">
                             <option value="簡訊">簡訊通知</option>
                             <option value="LINE群組">LINE群組通知</option>
                             <option value="電話通知">電話通知</option>
@@ -122,7 +180,7 @@
                 </div>
 
                 <div class="bg-slate-100 p-4 rounded-lg flex justify-between items-center border border-slate-200">
-                    <span class="text-slate-600 text-sm">總品項統計：<strong id="itemSummaryPreview" class="text-slate-800">未選擇品項</strong></span>
+                    <span class="text-slate-600 text-sm">已選品項：<strong id="itemSummaryPreview" class="text-slate-800">未選擇品項</strong></span>
                     <span class="text-slate-700 text-sm">預估總金額：<strong id="totalPricePreview" class="text-slate-900 text-2xl font-bold">$0</strong> 元</span>
                 </div>
 
@@ -138,14 +196,15 @@
             
             <form id="reviewForm" onsubmit="addReview(event)" class="space-y-3 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="reviewName" required placeholder="您的暱稱 / 戶號 (例：C棟 媽媽)" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
+                    <input type="text" id="reviewName" required placeholder="您的暱稱 / 戶號 (例：C棟 5樓 媽媽)" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
                     <select id="reviewRating" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
-                        <option value="5">★ ★ ★ ★ ★ (非常推薦)</option>
-                        <option value="4">★ ★ ★ ★ ☆ (滿意)</option>
-                        <option value="3">★ ★ ★ ☆ ☆ (普通)</option>
+                        <option value="5.0">5.0 ★ (非常推薦)</option>
+                        <option value="4.5">4.5 ★ (很讚)</option>
+                        <option value="4.0">4.0 ★ (滿意)</option>
+                        <option value="3.0">3.0 ★ (普通)</option>
                     </select>
                 </div>
-                <textarea id="reviewText" required rows="2" placeholder="撰寫品嚐心得或開箱評價，提供鄰居跟團參考..." class="w-full border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500"></textarea>
+                <textarea id="reviewText" required rows="2" placeholder="寫下您的品嚐心得或開箱評價，提供鄰居跟團參考... (例：伯爵茶貝果香氣超棒！)" class="w-full border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500"></textarea>
                 <button type="submit" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded text-sm transition">
                     發布評價
                 </button>
@@ -156,7 +215,7 @@
             </div>
         </section>
 
-        <!-- 團主後台與物流管理區 (預設隱藏，需登入) -->
+        <!-- 團主後台與物流管理區 (預設隱藏，需密碼登入) -->
         <section id="adminSection" class="hidden bg-slate-900 text-white rounded-xl shadow-md p-6 border border-slate-800">
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pb-3 border-b border-slate-700">
                 <div>
@@ -176,8 +235,8 @@
             <!-- 總量統計卡片 -->
             <div class="grid grid-cols-2 gap-4 mb-4 text-center">
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                    <p class="text-xs text-slate-400 font-semibold">社區訂購總份數</p>
-                    <p id="statTotalQty" class="text-2xl font-bold text-emerald-400 mt-1">0 件</p>
+                    <p class="text-xs text-slate-400 font-semibold">累積訂單數</p>
+                    <p id="statTotalQty" class="text-2xl font-bold text-emerald-400 mt-1">0 筆</p>
                 </div>
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                     <p class="text-xs text-slate-400 font-semibold">團購累積總金額</p>
@@ -189,11 +248,11 @@
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
                         <tr class="bg-slate-800 text-slate-300 border-b border-slate-700">
-                            <th class="p-3 font-semibold">住戶</th>
-                            <th class="p-3 font-semibold">訂購明細</th>
-                            <th class="p-3 font-semibold">應付金額</th>
-                            <th class="p-3 font-semibold">通知管道</th>
-                            <th class="p-3 font-semibold">對帳與物流狀態</th>
+                            <th class="p-3 font-semibold">住戶資訊</th>
+                            <th class="p-3 font-semibold">訂購品項明細</th>
+                            <th class="p-3 font-semibold">金額</th>
+                            <th class="p-3 font-semibold">取貨/通知</th>
+                            <th class="p-3 font-semibold">付款與物流狀態</th>
                             <th class="p-3 font-semibold">操作</th>
                         </tr>
                     </thead>
@@ -209,32 +268,40 @@
     <script>
         const PRICE_BAGEL = 35;
         const PRICE_STRAWBERRY = 220;
+        const PRICE_TOAST = 130;
+        const PRICE_DUCK = 160;
         const PRICE_COOLER = 50;
 
         let isAdmin = false;
         let bagelQty = 0;
         let strawberryQty = 0;
+        let toastQty = 0;
+        let duckQty = 0;
 
         // 預設訂單資料
-        let orders = JSON.parse(localStorage.getItem('community_groupbuy_orders_v2')) || [
-            { id: 1, name: 'B棟 5樓 陳小姐', phone: '0911222333', details: '貝果(藍莓乳酪)x2, 草莓盒x1, 保冷袋', price: 340, time: '平日 17:00 - 20:00', notify: 'LINE群組', paid: true, picked: false },
-            { id: 2, name: 'A棟 12樓 林先生', phone: '0988777666', details: '草莓盒x2', price: 440, time: '週末全天 (管理室代收)', notify: '簡訊', paid: false, picked: false }
+        let orders = JSON.parse(localStorage.getItem('community_groupbuy_orders_v3')) || [
+            { id: 1, name: 'B棟 5樓 陳小姐', phone: '0911-222333', details: '貝果(伯爵茶)x2, 千層吐司x1, 保冷袋', price: 250, time: '平日 17:00 - 19:00', notify: 'LINE群組', paid: true, picked: false },
+            { id: 2, name: 'A棟 12樓 林先生', phone: '0988-777666', details: '草莓盒x1, 辣鴨翅x2', price: 540, time: '管理室代收 (全天)', notify: '簡訊', paid: false, picked: false }
         ];
 
-        // 預設評價資料
-        let reviews = JSON.parse(localStorage.getItem('community_groupbuy_reviews_v2')) || [
-            { name: 'C棟 媽媽', rating: 5, text: '藍莓乳酪貝果微波加熱後超級軟綿，小朋友非常喜歡！' },
-            { name: 'A棟 主委', rating: 4, text: '草莓非常新鮮大顆，品質很棒，期待下次再開團。' }
+        // 預設評價資料 (數字 + 單星圖示)
+        let reviews = JSON.parse(localStorage.getItem('community_groupbuy_reviews_v3')) || [
+            { name: 'C棟 5樓 媽媽', rating: '5.0', text: '新推出的伯爵茶貝果茶香超濃，加熱後口感依然極度鬆軟，小孩超愛！' },
+            { name: 'A棟 8樓 主委', rating: '4.8', text: '大湖草莓當日採收真的有夠新鮮，水分充足又甜，包裝也很完善。' },
+            { name: 'D棟 3樓 鄰居', rating: '4.5', text: '千層吐司奶油香濃郁，撕著吃很有口感，下次還會跟團！' }
         ];
 
         function adjustItemQty(item, amount) {
-            if (item === 'bagel') {
-                bagelQty = Math.max(0, bagelQty + amount);
-                document.getElementById('bagelQty').innerText = bagelQty;
-            } else if (item === 'strawberry') {
-                strawberryQty = Math.max(0, strawberryQty + amount);
-                document.getElementById('strawberryQty').innerText = strawberryQty;
-            }
+            if (item === 'bagel') bagelQty = Math.max(0, bagelQty + amount);
+            if (item === 'strawberry') strawberryQty = Math.max(0, strawberryQty + amount);
+            if (item === 'toast') toastQty = Math.max(0, toastQty + amount);
+            if (item === 'duck') duckQty = Math.max(0, duckQty + amount);
+            
+            document.getElementById('bagelQty').innerText = bagelQty;
+            document.getElementById('strawberryQty').innerText = strawberryQty;
+            document.getElementById('toastQty').innerText = toastQty;
+            document.getElementById('duckQty').innerText = duckQty;
+            
             updateUI();
         }
 
@@ -242,21 +309,26 @@
             const hasCooler = document.getElementById('addCooler').checked;
             const bagelFlavor = document.getElementById('bagelFlavor').value;
             
-            let total = (bagelQty * PRICE_BAGEL) + (strawberryQty * PRICE_STRAWBERRY) + (hasCooler ? PRICE_COOLER : 0);
+            let total = (bagelQty * PRICE_BAGEL) + 
+                        (strawberryQty * PRICE_STRAWBERRY) + 
+                        (toastQty * PRICE_TOAST) + 
+                        (duckQty * PRICE_DUCK) + 
+                        (hasCooler ? PRICE_COOLER : 0);
             
             let summaryItems = [];
             if (bagelQty > 0) summaryItems.push(`貝果(${bagelFlavor})x${bagelQty}`);
             if (strawberryQty > 0) summaryItems.push(`草莓盒x${strawberryQty}`);
+            if (toastQty > 0) summaryItems.push(`千層吐司x${toastQty}`);
+            if (duckQty > 0) summaryItems.push(`辣鴨翅x${duckQty}`);
             if (hasCooler) summaryItems.push(`保冷袋`);
 
             document.getElementById('itemSummaryPreview').innerText = summaryItems.length > 0 ? summaryItems.join(', ') : '未選擇品項';
             document.getElementById('totalPricePreview').innerText = `$${total}`;
 
             // 計算團主後台總量
-            const totalItemsCount = orders.reduce((sum, o) => sum + o.price, 0); // 簡單統計
             const totalPriceAll = orders.reduce((sum, o) => sum + o.price, 0);
 
-            document.getElementById('statTotalQty').innerText = `${orders.length} 筆訂單`;
+            document.getElementById('statTotalQty').innerText = `${orders.length} 筆`;
             document.getElementById('statTotalPrice').innerText = `$${totalPriceAll} 元`;
 
             // 渲染後台表格
@@ -273,7 +345,7 @@
                     </td>
                     <td class="p-3 text-xs text-slate-300 font-medium">${order.details}</td>
                     <td class="p-3 text-emerald-400 font-bold">$${order.price}</td>
-                    <td class="p-3 text-xs text-slate-400">${order.notify}</td>
+                    <td class="p-3 text-xs text-slate-400">${order.time}<br><span class="text-slate-500">(${order.notify})</span></td>
                     <td class="p-3 space-x-1 space-y-1">
                         <button onclick="toggleStatus(${order.id}, 'paid')" class="px-2 py-1 text-xs font-bold rounded ${order.paid ? 'bg-emerald-900 text-emerald-200' : 'bg-rose-900 text-rose-200'}">
                             ${order.paid ? '已付款' : '未付款'}
@@ -281,11 +353,9 @@
                         <button onclick="toggleStatus(${order.id}, 'picked')" class="px-2 py-1 text-xs font-bold rounded ${order.picked ? 'bg-sky-900 text-sky-200' : 'bg-slate-700 text-slate-300'}">
                             ${order.picked ? '已領貨' : '待領貨'}
                         </button>
-                        <button onclick="sendArrivalNotice('${order.name}', '${order.notify}')" class="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 rounded font-medium transition">
-                            提醒
-                        </button>
                     </td>
-                    <td class="p-3">
+                    <td class="p-3 space-x-2">
+                        <button onclick="sendArrivalNotice('${order.name}', '${order.notify}')" class="text-sky-400 hover:text-sky-300 text-xs">提醒</button>
                         <button onclick="deleteOrder(${order.id})" class="text-rose-400 hover:text-rose-300 text-xs">刪除</button>
                     </td>
                 `;
@@ -293,7 +363,7 @@
             });
 
             renderReviews();
-            localStorage.setItem('community_groupbuy_orders_v2', JSON.stringify(orders));
+            localStorage.setItem('community_groupbuy_orders_v3', JSON.stringify(orders));
         }
 
         // 提交跟團訂單
@@ -302,7 +372,7 @@
             const hasCooler = document.getElementById('addCooler').checked;
             const bagelFlavor = document.getElementById('bagelFlavor').value;
 
-            if (bagelQty === 0 && strawberryQty === 0 && !hasCooler) {
+            if (bagelQty === 0 && strawberryQty === 0 && toastQty === 0 && duckQty === 0 && !hasCooler) {
                 alert('請至少選擇一種團購品項或加購品！');
                 return;
             }
@@ -310,9 +380,15 @@
             let summaryItems = [];
             if (bagelQty > 0) summaryItems.push(`貝果(${bagelFlavor})x${bagelQty}`);
             if (strawberryQty > 0) summaryItems.push(`草莓盒x${strawberryQty}`);
+            if (toastQty > 0) summaryItems.push(`千層吐司x${toastQty}`);
+            if (duckQty > 0) summaryItems.push(`辣鴨翅x${duckQty}`);
             if (hasCooler) summaryItems.push(`保冷袋`);
 
-            const total = (bagelQty * PRICE_BAGEL) + (strawberryQty * PRICE_STRAWBERRY) + (hasCooler ? PRICE_COOLER : 0);
+            const total = (bagelQty * PRICE_BAGEL) + 
+                        (strawberryQty * PRICE_STRAWBERRY) + 
+                        (toastQty * PRICE_TOAST) + 
+                        (duckQty * PRICE_DUCK) + 
+                        (hasCooler ? PRICE_COOLER : 0);
 
             const newOrder = {
                 id: Date.now(),
@@ -330,13 +406,17 @@
             document.getElementById('orderForm').reset();
             bagelQty = 0;
             strawberryQty = 0;
+            toastQty = 0;
+            duckQty = 0;
             document.getElementById('bagelQty').innerText = '0';
             document.getElementById('strawberryQty').innerText = '0';
+            document.getElementById('toastQty').innerText = '0';
+            document.getElementById('duckQty').innerText = '0';
             updateUI();
             alert('已成功登記跟團預購！');
         });
 
-        // 團主權限驗證
+        // 團主密碼驗證登入 (預設密碼 1234)
         function toggleAdminView() {
             if (isAdmin) {
                 logoutAdmin();
@@ -364,11 +444,11 @@
         function addReview(e) {
             e.preventDefault();
             const name = document.getElementById('reviewName').value;
-            const rating = parseInt(document.getElementById('reviewRating').value);
+            const rating = document.getElementById('reviewRating').value;
             const text = document.getElementById('reviewText').value;
 
             reviews.unshift({ name, rating, text });
-            localStorage.setItem('community_groupbuy_reviews_v2', JSON.stringify(reviews));
+            localStorage.setItem('community_groupbuy_reviews_v3', JSON.stringify(reviews));
             document.getElementById('reviewForm').reset();
             renderReviews();
         }
@@ -376,12 +456,11 @@
         function renderReviews() {
             const list = document.getElementById('reviewsList');
             list.innerHTML = reviews.map(r => {
-                const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
                 return `
                     <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-slate-800">${r.name}</span>
-                            <span class="text-xs text-amber-500 font-bold">${stars}</span>
+                            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">${r.rating} ★</span>
                         </div>
                         <p class="text-slate-600 text-xs">${r.text}</p>
                     </div>
