@@ -3,785 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社區美食團購</title>
-    <!-- Tailwind CSS CDN -->
+    <title>社區美食團購網</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 font-sans pb-16">
-    <!-- 頂部 Header -->
-    <header class="bg-slate-800 text-white py-6 shadow-md">
-        <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+    <!-- 頂部導覽列 -->
+    <header class="bg-slate-800 text-white py-5 shadow-md sticky top-0 z-10">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div>
-                <span class="bg-amber-500 text-slate-900 font-bold text-xs px-2.5 py-1 rounded">社區獨家回饋價</span>
-                <h1 class="text-2xl sm:text-3xl font-bold mt-1 tracking-tight">社區美食團購</h1>
-                <p class="text-slate-300 text-xs sm:text-sm mt-0.5">嚴選熱門排隊美食 ｜ 專屬社區免費直送 ｜ 取貨地點：社區管理室前</p>
+                <h1 class="text-2xl font-bold tracking-tight">社區美食團購網</h1>
+                <p class="text-slate-300 text-xs mt-0.5">鄰里集單享優惠 · 社區嘉年華活動合作平台</p>
             </div>
-            <!-- 切換角色按鈕 -->
-            <button onclick="toggleAdminView()" id="adminToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition">
-                團主登入
-            </button>
+            <div class="flex gap-2 bg-slate-700 p-1 rounded-lg">
+                <button id="navBuyer" onclick="switchRole('buyer')" class="px-4 py-1.5 rounded-md text-sm font-semibold bg-white text-slate-900 shadow-sm transition">
+                    住戶團購前台
+                </button>
+                <button id="navAdmin" onclick="switchRole('admin')" class="px-4 py-1.5 rounded-md text-sm font-semibold text-slate-200 hover:text-white transition">
+                    團主管理後台
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
-        <!-- 住戶跟團下單區 (前台) -->
-        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">我要跟團預購</h2>
-            <form id="orderForm" class="space-y-5">
-                
-                <!-- 住戶資料 -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">戶號 (棟別 / 樓層) *</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <select id="buildingSelect" class="border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500 text-sm bg-white">
-                                <option value="A棟">A棟</option>
-                                <option value="B棟">B棟</option>
-                                <option value="C棟">C棟</option>
-                                <option value="D棟">D棟</option>
-                                <option value="E棟">E棟</option>
-                                <option value="F棟">F棟</option>
-                            </select>
-                            <select id="floorSelect" class="border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500 text-sm bg-white">
-                                <!-- JS動態生成1-24樓 -->
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">住戶姓名 *</label>
-                        <input type="text" id="userName" required placeholder="例如：張先生" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-slate-500 outline-none text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">聯絡電話 *</label>
-                        <input type="tel" id="userPhone" required placeholder="請填10位數字 (例：0912345678)" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-slate-500 outline-none text-sm">
-                    </div>
-                </div>
+    <!-- ================= 住戶團購前台 ================= -->
+    <main id="buyerView" class="max-w-5xl mx-auto px-4 mt-6 space-y-6">
+        <!-- 活動橫幅說明 -->
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded">社區嘉年華連動</span>
+                <p class="text-sm text-slate-700 mt-1">已在抽獎機或競標台取得專屬代碼？結帳時於下方輸入即可折抵或認領得標商品！</p>
+            </div>
+            <a href="#wishlistSection" class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg shrink-0 transition">
+                👇 前往許願池敲碗
+            </a>
+        </div>
 
-                <!-- 複選多品項區 -->
-                <div class="border-t border-slate-100 pt-4 space-y-4">
-                    <label class="block text-sm font-semibold text-slate-700">選擇團購品項：</label>
-
-                    <!-- [新增] Gather Town 競標得標解鎖品項 (輸入 BID-180 後顯示) -->
-                    <div id="bidUnlockedBanner" class="hidden bg-amber-50 p-4 rounded-lg border-2 border-dashed border-amber-400 flex justify-between items-center">
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded font-bold">Gather Town 競標得標</span>
-                                <p class="font-bold text-slate-800 text-base">限量大湖草莓起司塔 (1份)</p>
-                            </div>
-                            <p class="text-xs text-amber-800 mt-1">已驗證得標認領碼，此限量商品已自動鎖定加入您的訂單明細中。</p>
-                        </div>
-                        <span class="text-base font-extrabold text-amber-700 whitespace-nowrap ml-2">$180</span>
-                    </div>
-
-                    <!-- 品項 1：鬆軟日式貝果 (多口味同時選購) -->
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <p class="font-bold text-slate-800 text-base">鬆軟日式貝果</p>
-                                    <span class="bg-rose-100 text-rose-700 text-xs px-2 py-0.5 rounded font-bold">烘焙金獎肯定</span>
-                                </div>
-                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                                    採用日本進口麵粉與 18 小時低溫湯種熟成工法，呈現極致鬆軟且具 Q 彈咬勁的完美口感！榮獲年度團購美食金獎，熱銷突破十萬顆的人氣早餐首選。
-                                </p>
-                            </div>
-                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$45 / 個</span>
-                        </div>
-                        
-                        <!-- 貝果多口味選購列表 -->
-                        <div class="pt-2 border-t border-slate-200/60 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
-                                <span class="text-xs font-semibold text-slate-700">經典原味貝果</span>
-                                <div class="flex items-center space-x-1">
-                                    <button type="button" onclick="adjustBagelFlavor('original', -1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">-</button>
-                                    <span id="qty_original" class="w-5 text-center font-bold text-xs">0</span>
-                                    <button type="button" onclick="adjustBagelFlavor('original', 1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">+</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
-                                <span class="text-xs font-semibold text-slate-700">藍莓乳酪貝果</span>
-                                <div class="flex items-center space-x-1">
-                                    <button type="button" onclick="adjustBagelFlavor('blueberry', -1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">-</button>
-                                    <span id="qty_blueberry" class="w-5 text-center font-bold text-xs">0</span>
-                                    <button type="button" onclick="adjustBagelFlavor('blueberry', 1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">+</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
-                                <span class="text-xs font-semibold text-slate-700">伯爵茶貝果</span>
-                                <div class="flex items-center space-x-1">
-                                    <button type="button" onclick="adjustBagelFlavor('earlgrey', -1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">-</button>
-                                    <span id="qty_earlgrey" class="w-5 text-center font-bold text-xs">0</span>
-                                    <button type="button" onclick="adjustBagelFlavor('earlgrey', 1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">+</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
-                                <span class="text-xs font-semibold text-slate-700">榛果巧克力貝果</span>
-                                <div class="flex items-center space-x-1">
-                                    <button type="button" onclick="adjustBagelFlavor('choco', -1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">-</button>
-                                    <span id="qty_choco" class="w-5 text-center font-bold text-xs">0</span>
-                                    <button type="button" onclick="adjustBagelFlavor('choco', 1)" class="w-6 h-6 bg-slate-100 border border-slate-300 rounded font-bold text-xs hover:bg-slate-200">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 品項 2：產地直送大湖草莓盒 -->
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <p class="font-bold text-slate-800 text-base">產地直送大湖草莓盒 (300g)</p>
-                                    <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-bold">當日晨採</span>
-                                </div>
-                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                                    苗栗大湖果園清晨新鮮採收，全程冷藏專車直達社區！果實紅潤結實、鮮嫩多汁，帶有獨特的濃郁草莓自然香氣，給您最頂級的鮮採甜美滋味。
-                                </p>
-                            </div>
-                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$220 / 盒</span>
-                        </div>
-                        <div class="flex items-center space-x-2 justify-end pt-1 border-t border-slate-200/60">
-                            <span class="text-xs text-slate-600 font-medium">數量：</span>
-                            <button type="button" onclick="adjustItemQty('strawberry', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
-                            <span id="strawberryQty" class="w-6 text-center font-bold text-sm">0</span>
-                            <button type="button" onclick="adjustItemQty('strawberry', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
-                        </div>
-                    </div>
-
-                    <!-- 品項 3：極致濃郁半熟起司塔 -->
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <p class="font-bold text-slate-800 text-base">極致濃郁半熟起司塔 (4入/盒)</p>
-                                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-bold">下午茶首選</span>
-                                </div>
-                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                                    嚴選北海道奶油乳酪完美調配，金黃酥脆塔皮搭配滑順爆漿半熟內餡！冷藏食用如冰淇淋般濃郁，微波溫熱享受爆漿口感，令人難以抗拒。
-                                </p>
-                            </div>
-                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$180 / 盒</span>
-                        </div>
-                        <div class="flex items-center space-x-2 justify-end pt-1 border-t border-slate-200/60">
-                            <span class="text-xs text-slate-600 font-medium">數量：</span>
-                            <button type="button" onclick="adjustItemQty('tart', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
-                            <span id="tartQty" class="w-6 text-center font-bold text-sm">0</span>
-                            <button type="button" onclick="adjustItemQty('tart', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
-                        </div>
-                    </div>
-
-                    <!-- 品項 4：秘製老滷香滷豆乾 -->
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <p class="font-bold text-slate-800 text-base">秘製老滷香滷豆乾 (300g/包)</p>
-                                    <span class="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded font-bold">團購人氣王</span>
-                                </div>
-                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                                    遵循古法使用十餘種漢方香料與特調老滷汁慢火燉煮！豆乾孔洞吸滿濃郁滷汁，咬下去多汁入味甘甜不膩，是聊天追劇的最佳古早味小點。
-                                </p>
-                            </div>
-                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap ml-2">$100 / 包</span>
-                        </div>
-                        <div class="flex items-center space-x-2 justify-end pt-1 border-t border-slate-200/60">
-                            <span class="text-xs text-slate-600 font-medium">數量：</span>
-                            <button type="button" onclick="adjustItemQty('tofu', -1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">-</button>
-                            <span id="tofuQty" class="w-6 text-center font-bold text-sm">0</span>
-                            <button type="button" onclick="adjustItemQty('tofu', 1)" class="w-7 h-7 bg-white border border-slate-300 rounded font-bold text-sm hover:bg-slate-100">+</button>
-                        </div>
-                    </div>
-
-                    <!-- 加購品：保冷袋 -->
-                    <div class="flex justify-between items-center bg-slate-50 p-3.5 rounded-lg border border-slate-200">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" id="addCooler" onchange="updateUI()" class="w-4 h-4 text-slate-600 rounded focus:ring-slate-500">
-                            <label for="addCooler" class="text-sm font-medium text-slate-700 cursor-pointer">
-                                超值加購：加厚質感長效保冷袋 (+ $50 / 個)
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 取貨與到貨通知 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">偏好取貨時段</label>
-                        <select id="pickupTime" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500 text-sm">
-                            <option value="平日 17:00 - 19:00">平日 17:00 - 19:00</option>
-                            <option value="平日 19:00 - 21:00">平日 19:00 - 21:00</option>
-                            <option value="週末 10:00 - 12:00">週末 10:00 - 12:00</option>
-                            <option value="週末 14:00 - 17:00">週末 14:00 - 17:00</option>
-                            <option value="管理室代收 (全天)">管理室代收 (全天)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">到貨通知</label>
-                        <select id="notifyType" class="w-full border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-slate-500 text-sm">
-                            <option value="簡訊">簡訊通知</option>
-                            <option value="LINE群組">LINE群組通知</option>
-                            <option value="電話通知">電話通知</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- [新增] 統一優惠折扣碼 / 競標得標認領碼輸入框 -->
-                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
-                    <label for="promoCodeInput" class="block text-sm font-semibold text-slate-700">
-                        優惠折扣碼 / 競標得標認領碼 <span class="text-xs font-normal text-slate-500">(於 Gather Town 社區嘉年華取得)</span>
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="text" id="promoCodeInput" placeholder="請輸入折扣碼 (如 GB50) 或得標認領碼 (如 BID-180)" class="flex-1 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-slate-500 bg-white">
-                        <button type="button" onclick="applyPromoCode()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-sm transition whitespace-nowrap">
-                            套用代碼
-                        </button>
-                    </div>
-                    <p id="promoCodeMsg" class="text-xs font-semibold hidden"></p>
-                </div>
-
-                <div class="bg-slate-100 p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2 border border-slate-200">
-                    <span class="text-slate-600 text-sm">已選品項：<strong id="itemSummaryPreview" class="text-slate-800">未選擇品項</strong></span>
-                    <div class="text-right">
-                        <span id="discountTag" class="text-xs font-bold text-emerald-600 mr-2 hidden"></span>
-                        <span class="text-slate-700 text-sm">預估總金額：<strong id="totalPricePreview" class="text-slate-900 text-2xl font-bold">$0</strong> 元</span>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-lg shadow transition">
-                    確認跟團預購
-                </button>
-            </form>
+        <!-- 本期開團商品列表 -->
+        <section>
+            <h2 class="text-lg font-bold text-slate-900 mb-3">本期開團美食</h2>
+            <div id="productGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
         </section>
 
-        <!-- 評價與心得分享牆 -->
-        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">評價與心得分享牆</h2>
-            
-            <form id="reviewForm" onsubmit="addReview(event)" class="space-y-3 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="reviewName" required placeholder="戶號-住戶姓名 (例：C棟-5樓-張太太)" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
-                    <select id="reviewRating" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500">
-                        <option value="5.0">5.0 ★ (非常推薦)</option>
-                        <option value="4.5">4.5 ★ (很讚)</option>
-                        <option value="4.0">4.0 ★ (滿意)</option>
-                        <option value="3.0">3.0 ★ (普通)</option>
-                    </select>
-                </div>
-                <textarea id="reviewText" required rows="2" placeholder="寫下您的品嚐心得或開箱評價，提供跟團參考... (例：原味貝果微波後超級鬆軟！)" class="w-full border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500"></textarea>
-                <button type="submit" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded text-sm transition">
-                    發布評價
-                </button>
-            </form>
-            <div id="reviewsList" class="space-y-3 max-h-60 overflow-y-auto">
-                <!-- 動態渲染評價 -->
-            </div>
-        </section>
+        <!-- 優惠代碼 / 競標認領與結帳區 -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-5">
+            <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">訂單明細與結帳</h2>
 
-        <!-- [新增] 住戶敲碗許願池 -->
-        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-                <h2 class="text-xl font-bold text-slate-900">住戶敲碗許願池</h2>
-                <span class="text-xs text-slate-500">同一品項每人限按一次 +1</span>
-            </div>
-            
-            <form id="wishForm" onsubmit="addWish(event)" class="space-y-3 mb-5 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" id="wishItemInput" required placeholder="想敲碗團購的美食 (例：阿默千層蛋糕)" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500 bg-white">
-                    <input type="text" id="wishNoteInput" placeholder="備註需求 (例：希望有減糖版本 / 週末下午茶)" class="border border-slate-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-slate-500 bg-white">
-                </div>
-                <button type="submit" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded text-sm transition">
-                    送出敲碗許願
-                </button>
-            </form>
-
-            <div id="wishList" class="space-y-2.5 max-h-64 overflow-y-auto">
-                <!-- 動態渲染許願列表 -->
-            </div>
-        </section>
-
-        <!-- 團主後台與物流管理區 (預設隱藏，需密碼登入) -->
-        <section id="adminSection" class="hidden bg-slate-900 text-white rounded-xl shadow-md p-6 border border-slate-800">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4 pb-3 border-b border-slate-700">
-                <div>
-                    <span class="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded font-bold">團主管理模式</span>
-                    <h2 class="text-xl font-bold mt-1">跟團名單與物流對帳後台</h2>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="copyLineSummary()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded border border-slate-600 transition">
-                        一鍵複製 LINE 廣播格式
-                    </button>
-                    <button onclick="logoutAdmin()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded transition">
-                        退出管理
+            <!-- 折扣碼 / 得標認領碼輸入框（已移除淺色提示字與 Gather Town 字樣） -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                <label for="promoInput" class="block text-sm font-bold text-slate-800">
+                    優惠折扣碼 / 競標得標認領碼 <span class="text-xs font-normal text-slate-500">（於社區嘉年華取得）</span>
+                </label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="promoInput" class="flex-1 bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-sm font-mono uppercase focus:outline-none focus:border-slate-600">
+                    <button onclick="applyPromoCode()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm px-5 py-2 rounded-lg transition shrink-0">
+                        套用代碼
                     </button>
                 </div>
+                <p id="promoFeedback" class="text-xs font-semibold hidden"></p>
             </div>
 
-            <!-- 總量統計卡片 -->
-            <div class="grid grid-cols-2 gap-4 mb-4 text-center">
-                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                    <p class="text-xs text-slate-400 font-semibold">累積訂單數</p>
-                    <p id="statTotalQty" class="text-2xl font-bold text-emerald-400 mt-1">0 筆</p>
+            <!-- 購物車清單 -->
+            <div id="cartList" class="space-y-2 text-sm">
+                <p class="text-slate-400 text-center py-4">目前尚未選購任何商品</p>
+            </div>
+
+            <!-- 金額統計 -->
+            <div class="border-t border-slate-200 pt-4 space-y-1.5 text-sm">
+                <div class="flex justify-between text-slate-600">
+                    <span>商品小計</span>
+                    <span id="subtotalText">$0</span>
                 </div>
-                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                    <p class="text-xs text-slate-400 font-semibold">團購累積總金額</p>
-                    <p id="statTotalPrice" class="text-2xl font-bold text-emerald-400 mt-1">$0 元</p>
+                <div id="discountRow" class="flex justify-between text-emerald-600 font-semibold hidden">
+                    <span id="discountLabel">優惠折抵</span>
+                    <span id="discountText">-$0</span>
+                </div>
+                <div class="flex justify-between text-lg font-extrabold text-slate-900 pt-2 border-t border-slate-100">
+                    <span>應付總金額</span>
+                    <span id="totalText">$0</span>
                 </div>
             </div>
 
-            <!-- [新增] 熱門敲碗排行榜與 AI 選品策略建議 -->
-            <div class="bg-slate-800/90 p-4 rounded-lg border border-slate-700 mb-4 space-y-2">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-amber-400">📊 住戶熱門敲碗排行榜 & AI 選品採購建議</span>
-                </div>
-                <p id="adminWishRanking" class="text-xs text-slate-200 font-semibold"></p>
-                <p id="adminAiAdvice" class="text-xs text-emerald-300 leading-relaxed"></p>
+            <!-- 住戶資訊與送出 -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <input type="text" id="buyerName" placeholder="住戶姓名（例：陳小姐）" class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm">
+                <input type="text" id="buyerUnit" placeholder="棟別樓層（例：A棟 5樓）" class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm">
+                <button onclick="submitOrder()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-sm shadow-sm transition">
+                    確認送出團購單
+                </button>
+            </div>
+        </section>
+
+        <!-- 鄰里敲碗許願池 -->
+        <section id="wishlistSection" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">鄰里美食許願池</h2>
+                <p class="text-xs text-slate-500 mt-0.5">想吃什麼團購美食？許願或幫鄰居的提案 +1 敲碗，集滿人氣下期優先開團！</p>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-sm">
-                    <thead>
-                        <tr class="bg-slate-800 text-slate-300 border-b border-slate-700">
-                            <th class="p-3 font-semibold">住戶資訊</th>
-                            <th class="p-3 font-semibold">訂購品項明細</th>
-                            <th class="p-3 font-semibold">金額</th>
-                            <th class="p-3 font-semibold">取貨/通知</th>
-                            <th class="p-3 font-semibold">付款與物流狀態</th>
-                            <th class="p-3 font-semibold">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orderTableBody" class="divide-y divide-slate-800">
-                        <!-- 動態渲染訂單 -->
-                    </tbody>
-                </table>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="wishItemInput" placeholder="輸入想許願的美食名稱（例：嘉義福義軒蛋捲）" class="flex-1 border border-slate-300 rounded-lg px-3.5 py-2 text-sm">
+                <input type="text" id="wishReasonInput" placeholder="推薦理由（選填）" class="flex-1 border border-slate-300 rounded-lg px-3.5 py-2 text-sm">
+                <button onclick="addWishItem()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2 rounded-lg transition shrink-0">
+                    我要許願
+                </button>
             </div>
+
+            <div id="wishlistContainer" class="divide-y divide-slate-100"></div>
+        </section>
+    </main>
+
+    <!-- ================= 團主管理後台 ================= -->
+    <main id="adminView" class="hidden max-w-5xl mx-auto px-4 mt-6 space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-500">累計成立訂單數</p>
+                <p id="statOrders" class="text-2xl font-extrabold text-slate-900 mt-1">0 筆</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-500">團購總營收金額</p>
+                <p id="statRevenue" class="text-2xl font-extrabold text-emerald-600 mt-1">$0</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-500">許願池最高人氣提案</p>
+                <p id="statTopWish" class="text-base font-bold text-amber-600 mt-1.5 truncate">尚無資料</p>
+            </div>
+        </div>
+
+        <!-- AI 採購與開團分析建議 -->
+        <section class="bg-slate-800 text-white rounded-xl p-6 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold flex items-center gap-2">🤖 AI 智慧採購與下期開團決策分析</h2>
+                <button onclick="renderAdmin()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded">重新分析</button>
+            </div>
+            <div id="aiInsightBox" class="text-sm text-slate-200 leading-relaxed bg-slate-900/60 p-4 rounded-lg border border-slate-700"></div>
+        </section>
+
+        <!-- 訂單明細管理 -->
+        <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold text-slate-900">住戶訂單總表</h2>
+                <button onclick="clearDemoData()" class="text-xs text-rose-600 hover:underline">重置展示資料</button>
+            </div>
+            <div id="adminOrderList" class="divide-y divide-slate-100 text-sm"></div>
         </section>
     </main>
 
     <script>
-        const PRICE_BAGEL = 45;
-        const PRICE_STRAWBERRY = 220;
-        const PRICE_TART = 180;
-        const PRICE_TOFU = 100;
-        const PRICE_COOLER = 50;
-        const PRICE_BID_ITEM = 180;
+        const PRODUCTS = [
+            { id: 'p1', name: '法式手工可麗露禮盒 (6入)', price: 360, target: 20, sold: 16, tag: '本週熱銷' },
+            { id: 'p2', name: '台南老字號手炒黑糖鮮奶露', price: 140, target: 30, sold: 27, tag: '即將成團' },
+            { id: 'p3', name: '北海道十勝生乳捲 (原味)', price: 320, target: 15, sold: 11, tag: '社區口碑' }
+        ];
 
-        let isAdmin = false;
+        let cart = {};
         let appliedDiscount = 0;
-        let hasBidItem = false;
+        let appliedPromoCode = '';
+        let wonAuctionItem = null;
 
-        // 合法代碼字典 (前綴識別與防呆驗證)
-        const VALID_PROMO_CODES = {
-            'GB50': { type: 'discount', amount: 50, desc: '社區嘉年華 50 元折價券' },
-            'BID-180': { type: 'bid', price: 180, desc: '限量大湖草莓起司塔 (競標得標價 $180)' }
-        };
+        let orders = JSON.parse(localStorage.getItem('gb_orders')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('gb_wishlist')) || [
+            { id: 'w1', name: '彰化不二坊蛋黃酥 (6入盒裝)', reason: '中秋快到了想先幫家人訂', votes: 14, isMine: false },
+            { id: 'w2', name: '基隆廟口手工營養三明治', reason: '下午茶點心超適合', votes: 9, isMine: false }
+        ];
+        let votedWishIds = JSON.parse(localStorage.getItem('gb_voted_wishes')) || [];
 
-        // 初始化樓層下拉選單 (1樓至24樓)
-        const floorSelect = document.getElementById('floorSelect');
-        for (let i = 1; i <= 24; i++) {
-            const opt = document.createElement('option');
-            opt.value = `${i}樓`;
-            opt.innerText = `${i}樓`;
-            floorSelect.appendChild(opt);
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = PRODUCTS.map(p => {
+                const pct = Math.min(100, Math.round((p.sold / p.target) * 100));
+                return `
+                <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded">${p.tag}</span>
+                        <h3 class="text-base font-bold text-slate-900 mt-2">${p.name}</h3>
+                        <p class="text-xl font-extrabold text-slate-900 mt-1">$${p.price}</p>
+                        <div class="mt-3">
+                            <div class="flex justify-between text-xs text-slate-500 mb-1">
+                                <span>成團進度：${p.sold} / ${p.target} 份</span>
+                                <span class="font-bold text-slate-700">${pct}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-slate-800 h-full rounded-full" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addToCart('${p.id}')" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded-lg text-sm transition">
+                        + 加入團購單
+                    </button>
+                </div>`;
+            }).join('');
         }
 
-        // 貝果口味獨立數量
-        let bagelFlavors = {
-            original: 0,
-            blueberry: 0,
-            earlgrey: 0,
-            choco: 0
-        };
-        let strawberryQty = 0;
-        let tartQty = 0;
-        let tofuQty = 0;
-
-        // 預設訂單資料
-        let orders = JSON.parse(localStorage.getItem('community_groupbuy_orders_v6')) || [
-            { id: 1, name: 'B棟-5樓-陳小姐', phone: '0911222333', details: '貝果(原味)x2, 貝果(藍莓乳酪)x1, 起司塔x1, 保冷袋', price: 365, time: '平日 17:00 - 19:00', notify: 'LINE群組', paid: true, picked: false },
-            { id: 2, name: 'A棟-12樓-林先生', phone: '0988777666', details: '草莓盒x1, 香滷豆乾x2', price: 420, time: '管理室代收 (全天)', notify: '簡訊', paid: false, picked: false }
-        ];
-
-        // 預設評價資料
-        let reviews = JSON.parse(localStorage.getItem('community_groupbuy_reviews_v6')) || [
-            { name: 'C棟-5樓-張太太', rating: '5.0', text: '原味與藍莓乳酪貝果非常推薦，微波加熱後口感依然極度鬆軟！' },
-            { name: 'A棟-8樓-主委', rating: '4.8', text: '大湖草莓當日採收真的有夠新鮮，水分充足又甜，品質相當高。' },
-            { name: 'D棟-3樓-陳先生', rating: '4.5', text: '香滷豆乾十分入味吸滿滷汁，非常適合下酒與宵夜！' }
-        ];
-
-        // 預設敲碗許願資料與個人已投票紀錄 (一人一商品限按一次)
-        let wishes = JSON.parse(localStorage.getItem('community_groupbuy_wishes_v1')) || [
-            { id: 101, item: '阿默典藏千層蛋糕', note: '希望有減糖版本，週末下午茶想吃', votes: 12 },
-            { id: 102, item: '台南名產手工滷味拼盤', note: '追劇必備，微辣口味最好', votes: 8 },
-            { id: 103, item: '北海道生乳銅鑼燒', note: '小朋友下課點心', votes: 5 }
-        ];
-        let votedWishIds = JSON.parse(localStorage.getItem('community_groupbuy_voted_ids_v1')) || [];
-
-        function adjustBagelFlavor(flavor, amount) {
-            bagelFlavors[flavor] = Math.max(0, bagelFlavors[flavor] + amount);
-            document.getElementById(`qty_${flavor}`).innerText = bagelFlavors[flavor];
-            updateUI();
+        function addToCart(pid) {
+            cart[pid] = (cart[pid] || 0) + 1;
+            renderCart();
         }
 
-        function adjustItemQty(item, amount) {
-            if (item === 'strawberry') strawberryQty = Math.max(0, strawberryQty + amount);
-            if (item === 'tart') tartQty = Math.max(0, tartQty + amount);
-            if (item === 'tofu') tofuQty = Math.max(0, tofuQty + amount);
-            
-            document.getElementById('strawberryQty').innerText = strawberryQty;
-            document.getElementById('tartQty').innerText = tartQty;
-            document.getElementById('tofuQty').innerText = tofuQty;
-            
-            updateUI();
+        function updateQty(pid, delta) {
+            if (!cart[pid]) return;
+            cart[pid] += delta;
+            if (cart[pid] <= 0) delete cart[pid];
+            renderCart();
         }
 
-        // 套用優惠折扣碼 / 競標得標認領碼
         function applyPromoCode() {
-            const inputVal = document.getElementById('promoCodeInput').value.trim().toUpperCase();
-            const msgEl = document.getElementById('promoCodeMsg');
-            msgEl.classList.remove('hidden', 'text-rose-600', 'text-emerald-600', 'text-amber-600');
+            const raw = document.getElementById('promoInput').value.trim().toUpperCase();
+            const fb = document.getElementById('promoFeedback');
+            fb.classList.remove('hidden', 'text-emerald-600', 'text-rose-600');
 
-            if (!inputVal) {
-                msgEl.classList.add('text-rose-600');
-                msgEl.innerText = '請先輸入折扣碼或競標得標碼！';
-                return;
-            }
-
-            const codeInfo = VALID_PROMO_CODES[inputVal];
-            if (!codeInfo) {
-                msgEl.classList.add('text-rose-600');
-                msgEl.innerText = '❌ 無效的代碼，請確認是否輸入正確（不接受隨意輸入）。';
-                return;
-            }
-
-            if (codeInfo.type === 'discount') {
-                appliedDiscount = codeInfo.amount;
-                msgEl.classList.add('text-emerald-600');
-                msgEl.innerText = `✅ 已套用【${codeInfo.desc}】，應付總金額現折 $${codeInfo.amount}！`;
-            } else if (codeInfo.type === 'bid') {
-                hasBidItem = true;
-                document.getElementById('bidUnlockedBanner').classList.remove('hidden');
-                msgEl.classList.add('text-amber-600');
-                msgEl.innerText = `🎉 驗證成功！已自動加入【${codeInfo.desc}】至訂單明細。`;
-            }
-
-            updateUI();
-        }
-
-        function updateUI() {
-            const hasCooler = document.getElementById('addCooler').checked;
-            
-            let totalBagelQty = bagelFlavors.original + bagelFlavors.blueberry + bagelFlavors.earlgrey + bagelFlavors.choco;
-            let rawTotal = (totalBagelQty * PRICE_BAGEL) + 
-                           (strawberryQty * PRICE_STRAWBERRY) + 
-                           (tartQty * PRICE_TART) + 
-                           (tofuQty * PRICE_TOFU) + 
-                           (hasCooler ? PRICE_COOLER : 0) +
-                           (hasBidItem ? PRICE_BID_ITEM : 0);
-
-            let finalTotal = Math.max(0, rawTotal - appliedDiscount);
-            
-            let summaryItems = [];
-            if (hasBidItem) summaryItems.push(`[競標得標] 限量大湖草莓起司塔x1`);
-            if (bagelFlavors.original > 0) summaryItems.push(`貝果(原味)x${bagelFlavors.original}`);
-            if (bagelFlavors.blueberry > 0) summaryItems.push(`貝果(藍莓乳酪)x${bagelFlavors.blueberry}`);
-            if (bagelFlavors.earlgrey > 0) summaryItems.push(`貝果(伯爵茶)x${bagelFlavors.earlgrey}`);
-            if (bagelFlavors.choco > 0) summaryItems.push(`貝果(巧克力)x${bagelFlavors.choco}`);
-            if (strawberryQty > 0) summaryItems.push(`草莓盒x${strawberryQty}`);
-            if (tartQty > 0) summaryItems.push(`起司塔x${tartQty}`);
-            if (tofuQty > 0) summaryItems.push(`香滷豆乾x${tofuQty}`);
-            if (hasCooler) summaryItems.push(`保冷袋`);
-
-            document.getElementById('itemSummaryPreview').innerText = summaryItems.length > 0 ? summaryItems.join(', ') : '未選擇品項';
-            document.getElementById('totalPricePreview').innerText = `$${finalTotal}`;
-
-            const discountTag = document.getElementById('discountTag');
-            if (appliedDiscount > 0) {
-                discountTag.classList.remove('hidden');
-                discountTag.innerText = `(已折抵 $${appliedDiscount})`;
+            if (raw.startsWith('GB')) {
+                const amount = parseInt(raw.replace('GB', ''), 10) || 50;
+                appliedDiscount = amount;
+                appliedPromoCode = raw;
+                fb.textContent = `🎉 驗證成功！已套用折價券【${raw}】，結帳現折 $${amount}。`;
+                fb.classList.add('text-emerald-600');
+            } else if (raw.startsWith('BID-')) {
+                const bidPrice = parseInt(raw.replace('BID-', ''), 10) || 180;
+                wonAuctionItem = { name: '限量大湖草莓起司塔 (特選版)', price: bidPrice, code: raw };
+                fb.textContent = `🎉 驗證成功！已自動加入【限量大湖草莓起司塔（競標得標價 $${bidPrice}）】至訂單明細。`;
+                fb.classList.add('text-emerald-600');
             } else {
-                discountTag.classList.add('hidden');
+                fb.textContent = '❌ 無效的代碼格式，請確認是否為社區嘉年華取得之代碼。';
+                fb.classList.add('text-rose-600');
             }
-
-            // 計算團主後台總量
-            const totalPriceAll = orders.reduce((sum, o) => sum + o.price, 0);
-            document.getElementById('statTotalQty').innerText = `${orders.length} 筆`;
-            document.getElementById('statTotalPrice').innerText = `$${totalPriceAll} 元`;
-
-            // 渲染後台表格
-            const tbody = document.getElementById('orderTableBody');
-            tbody.innerHTML = '';
-            orders.forEach(order => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/50 transition';
-                tr.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-100">
-                        ${order.name}
-                        <br><span class="text-xs text-slate-400 font-normal">${order.phone}</span>
-                    </td>
-                    <td class="p-3 text-xs text-slate-300 font-medium">${order.details}</td>
-                    <td class="p-3 text-emerald-400 font-bold">$${order.price}</td>
-                    <td class="p-3 text-xs text-slate-400">${order.time}<br><span class="text-slate-500">(${order.notify})</span></td>
-                    <td class="p-3 space-x-1 space-y-1">
-                        <button onclick="toggleStatus(${order.id}, 'paid')" class="px-2 py-1 text-xs font-bold rounded ${order.paid ? 'bg-emerald-900 text-emerald-200' : 'bg-rose-900 text-rose-200'}">
-                            ${order.paid ? '已付款' : '未付款'}
-                        </button>
-                        <button onclick="toggleStatus(${order.id}, 'picked')" class="px-2 py-1 text-xs font-bold rounded ${order.picked ? 'bg-sky-900 text-sky-200' : 'bg-slate-700 text-slate-300'}">
-                            ${order.picked ? '已領貨' : '待領貨'}
-                        </button>
-                    </td>
-                    <td class="p-3 space-x-2">
-                        <button onclick="sendArrivalNotice('${order.name}', '${order.notify}')" class="text-sky-400 hover:text-sky-300 text-xs">提醒</button>
-                        <button onclick="deleteOrder(${order.id})" class="text-rose-400 hover:text-rose-300 text-xs">刪除</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            renderReviews();
-            renderWishes();
-            renderAdminWishInsights();
-            localStorage.setItem('community_groupbuy_orders_v6', JSON.stringify(orders));
+            renderCart();
         }
 
-        // 提交跟團訂單驗證
-        document.getElementById('orderForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const building = document.getElementById('buildingSelect').value;
-            const floor = document.getElementById('floorSelect').value;
-            const nameInput = document.getElementById('userName').value.trim();
-            const phoneInput = document.getElementById('userPhone').value.trim();
-            const hasCooler = document.getElementById('addCooler').checked;
+        function renderCart() {
+            const list = document.getElementById('cartList');
+            const entries = Object.entries(cart);
+            let subtotal = 0;
+            let html = '';
 
-            if (!nameInput) {
-                alert('請輸入「住戶姓名」！(例如：張先生)');
-                document.getElementById('userName').focus();
-                return;
+            if (wonAuctionItem) {
+                subtotal += wonAuctionItem.price;
+                html += `
+                <div class="flex justify-between items-center bg-amber-50 border border-amber-200 p-3 rounded-lg">
+                    <div>
+                        <span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded mr-1.5">社區嘉年華 競標得標</span>
+                        <span class="font-bold text-slate-900">${wonAuctionItem.name}</span>
+                    </div>
+                    <span class="font-bold text-slate-900">$${wonAuctionItem.price}</span>
+                </div>`;
             }
 
-            const phoneRegex = /^\d{10}$/;
-            if (!phoneRegex.test(phoneInput)) {
-                alert('格式錯誤！電話號碼請輸入正確的 10 位數純數字 (例：0912345678)，請勿包含橫槓或斜線。');
-                document.getElementById('userPhone').focus();
-                return;
+            entries.forEach(([pid, qty]) => {
+                const prod = PRODUCTS.find(p => p.id === pid);
+                const itemTotal = prod.price * qty;
+                subtotal += itemTotal;
+                html += `
+                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <div>
+                        <span class="font-bold text-slate-800">${prod.name}</span>
+                        <span class="text-xs text-slate-500 ml-2">$${prod.price} / 份</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="updateQty('${pid}', -1)" class="w-6 h-6 bg-white border border-slate-300 rounded font-bold text-slate-700">-</button>
+                        <span class="w-6 text-center font-bold">${qty}</span>
+                        <button onclick="updateQty('${pid}', 1)" class="w-6 h-6 bg-white border border-slate-300 rounded font-bold text-slate-700">+</button>
+                        <span class="w-16 text-right font-bold text-slate-900">$${itemTotal}</span>
+                    </div>
+                </div>`;
+            });
+
+            list.innerHTML = html || '<p class="text-slate-400 text-center py-4">目前尚未選購任何商品</p>';
+
+            const discountRow = document.getElementById('discountRow');
+            let finalTotal = subtotal;
+            if (appliedDiscount > 0 && subtotal > 0) {
+                discountRow.classList.remove('hidden');
+                document.getElementById('discountLabel').textContent = `優惠折抵 (${appliedPromoCode})`;
+                document.getElementById('discountText').textContent = `-$${appliedDiscount}`;
+                finalTotal = Math.max(0, subtotal - appliedDiscount);
+            } else {
+                discountRow.classList.add('hidden');
             }
 
-            let totalBagelQty = bagelFlavors.original + bagelFlavors.blueberry + bagelFlavors.earlgrey + bagelFlavors.choco;
-            if (totalBagelQty === 0 && strawberryQty === 0 && tartQty === 0 && tofuQty === 0 && !hasCooler && !hasBidItem) {
-                alert('請至少選擇一種團購品項或加購品才能提交訂單！');
-                return;
-            }
+            document.getElementById('subtotalText').textContent = `$${subtotal}`;
+            document.getElementById('totalText').textContent = `$${finalTotal}`;
+        }
 
-            let summaryItems = [];
-            if (hasBidItem) summaryItems.push(`[競標得標] 限量大湖草莓起司塔x1`);
-            if (bagelFlavors.original > 0) summaryItems.push(`貝果(原味)x${bagelFlavors.original}`);
-            if (bagelFlavors.blueberry > 0) summaryItems.push(`貝果(藍莓乳酪)x${bagelFlavors.blueberry}`);
-            if (bagelFlavors.earlgrey > 0) summaryItems.push(`貝果(伯爵茶)x${bagelFlavors.earlgrey}`);
-            if (bagelFlavors.choco > 0) summaryItems.push(`貝果(巧克力)x${bagelFlavors.choco}`);
-            if (strawberryQty > 0) summaryItems.push(`草莓盒x${strawberryQty}`);
-            if (tartQty > 0) summaryItems.push(`起司塔x${tartQty}`);
-            if (tofuQty > 0) summaryItems.push(`香滷豆乾x${tofuQty}`);
-            if (hasCooler) summaryItems.push(`保冷袋`);
-            if (appliedDiscount > 0) summaryItems.push(`(已使用折扣碼折抵$${appliedDiscount})`);
+        function submitOrder() {
+            const name = document.getElementById('buyerName').value.trim();
+            const unit = document.getElementById('buyerUnit').value.trim();
+            if (!name || !unit) return alert('請填寫住戶姓名與棟別樓層！');
+            if (Object.keys(cart).length === 0 && !wonAuctionItem) return alert('購物車還是空的喔！');
 
-            const rawTotal = (totalBagelQty * PRICE_BAGEL) + 
-                             (strawberryQty * PRICE_STRAWBERRY) + 
-                             (tartQty * PRICE_TART) + 
-                             (tofuQty * PRICE_TOFU) + 
-                             (hasCooler ? PRICE_COOLER : 0) +
-                             (hasBidItem ? PRICE_BID_ITEM : 0);
-            const finalTotal = Math.max(0, rawTotal - appliedDiscount);
+            const items = [];
+            if (wonAuctionItem) items.push(`${wonAuctionItem.name} (競標得標) x1`);
+            Object.entries(cart).forEach(([pid, qty]) => {
+                const prod = PRODUCTS.find(p => p.id === pid);
+                items.push(`${prod.name} x${qty}`);
+            });
 
-            const fullName = `${building}-${floor}-${nameInput}`;
-            const newOrder = {
-                id: Date.now(),
-                name: fullName,
-                phone: phoneInput,
-                details: summaryItems.join(', '),
-                price: finalTotal,
-                time: document.getElementById('pickupTime').value,
-                notify: document.getElementById('notifyType').value,
-                paid: false,
-                picked: false
-            };
+            const total = parseInt(document.getElementById('totalText').textContent.replace('$', ''), 10);
+            orders.unshift({
+                id: 'ORD-' + Date.now().toString().slice(-4),
+                name, unit, items, total,
+                promo: appliedPromoCode || (wonAuctionItem ? wonAuctionItem.code : '無'),
+                time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+            });
+            localStorage.setItem('gb_orders', JSON.stringify(orders));
 
-            orders.push(newOrder);
-            document.getElementById('orderForm').reset();
-            
-            // 重置數量與折扣/競標狀態
-            bagelFlavors = { original: 0, blueberry: 0, earlgrey: 0, choco: 0 };
-            document.getElementById('qty_original').innerText = '0';
-            document.getElementById('qty_blueberry').innerText = '0';
-            document.getElementById('qty_earlgrey').innerText = '0';
-            document.getElementById('qty_choco').innerText = '0';
-            strawberryQty = 0;
-            tartQty = 0;
-            tofuQty = 0;
-            document.getElementById('strawberryQty').innerText = '0';
-            document.getElementById('tartQty').innerText = '0';
-            document.getElementById('tofuQty').innerText = '0';
-            
+            cart = {};
             appliedDiscount = 0;
-            hasBidItem = false;
-            document.getElementById('bidUnlockedBanner').classList.add('hidden');
-            document.getElementById('promoCodeMsg').classList.add('hidden');
-            
-            updateUI();
-            alert('已成功登記跟團預購！感謝您的支持。');
-        });
-
-        // 團主密碼驗證登入 (預設密碼 1234)
-        function toggleAdminView() {
-            if (isAdmin) {
-                logoutAdmin();
-                return;
-            }
-            const pwd = prompt('請輸入團主管理密碼 (預設：1234)：');
-            if (pwd === '1234') {
-                isAdmin = true;
-                document.getElementById('adminSection').classList.remove('hidden');
-                document.getElementById('adminToggleBtn').innerText = '退出團主模式';
-                document.getElementById('adminToggleBtn').className = 'bg-rose-700 hover:bg-rose-600 text-white text-xs px-3 py-2 rounded transition';
-            } else if (pwd !== null) {
-                alert('密碼錯誤！');
-            }
+            appliedPromoCode = '';
+            wonAuctionItem = null;
+            document.getElementById('promoInput').value = '';
+            document.getElementById('promoFeedback').classList.add('hidden');
+            renderCart();
+            alert(`✅ 訂單已成功送出！感謝 ${name} (${unit}) 參與團購。`);
         }
 
-        function logoutAdmin() {
-            isAdmin = false;
-            document.getElementById('adminSection').classList.add('hidden');
-            document.getElementById('adminToggleBtn').innerText = '團主登入';
-            document.getElementById('adminToggleBtn').className = 'bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition';
+        function addWishItem() {
+            const name = document.getElementById('wishItemInput').value.trim();
+            const reason = document.getElementById('wishReasonInput').value.trim() || '鄰居許願推薦';
+            if (!name) return alert('請輸入想許願的美食名稱！');
+
+            const newId = 'w-' + Date.now();
+            // 標記 isMine: true，代表住戶自己剛許願的項目
+            wishlist.unshift({ id: newId, name, reason, votes: 1, isMine: true });
+            votedWishIds.push(newId);
+            localStorage.setItem('gb_wishlist', JSON.stringify(wishlist));
+            localStorage.setItem('gb_voted_wishes', JSON.stringify(votedWishIds));
+
+            document.getElementById('wishItemInput').value = '';
+            document.getElementById('wishReasonInput').value = '';
+            renderWishlist();
         }
 
-        // 發送評價
-        function addReview(e) {
-            e.preventDefault();
-            const name = document.getElementById('reviewName').value;
-            const rating = document.getElementById('reviewRating').value;
-            const text = document.getElementById('reviewText').value;
-            reviews.unshift({ name, rating, text });
-            localStorage.setItem('community_groupbuy_reviews_v6', JSON.stringify(reviews));
-            document.getElementById('reviewForm').reset();
-            renderReviews();
-        }
-
-        function renderReviews() {
-            const list = document.getElementById('reviewsList');
-            list.innerHTML = reviews.map(r => {
-                return `
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-slate-800">${r.name}</span>
-                            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">${r.rating} ★</span>
-                        </div>
-                        <p class="text-slate-600 text-xs">${r.text}</p>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // 住戶敲碗許願池功能 (一人一商品限按一次)
-        function addWish(e) {
-            e.preventDefault();
-            const item = document.getElementById('wishItemInput').value.trim();
-            const note = document.getElementById('wishNoteInput').value.trim();
-            if (!item) return;
-
-            const newId = Date.now();
-            wishes.push({ id: newId, item, note, votes: 1 });
-            votedWishIds.push(newId); // 發起人自動計入已投過該商品一票
-
-            localStorage.setItem('community_groupbuy_wishes_v1', JSON.stringify(wishes));
-            localStorage.setItem('community_groupbuy_voted_ids_v1', JSON.stringify(votedWishIds));
-            document.getElementById('wishForm').reset();
-            renderWishes();
-            renderAdminWishInsights();
-        }
-
-        function voteWish(id) {
-            if (votedWishIds.includes(id)) {
-                alert('您已經對此敲碗商品投過票囉（每人限按一次）！');
-                return;
-            }
-            const target = wishes.find(w => w.id === id);
-            if (target) {
-                target.votes += 1;
-                votedWishIds.push(id);
-                localStorage.setItem('community_groupbuy_wishes_v1', JSON.stringify(wishes));
-                localStorage.setItem('community_groupbuy_voted_ids_v1', JSON.stringify(votedWishIds));
-                renderWishes();
-                renderAdminWishInsights();
+        function voteWish(wid) {
+            if (votedWishIds.includes(wid)) return;
+            const item = wishlist.find(w => w.id === wid);
+            if (item) {
+                item.votes += 1;
+                votedWishIds.push(wid);
+                localStorage.setItem('gb_wishlist', JSON.stringify(wishlist));
+                localStorage.setItem('gb_voted_wishes', JSON.stringify(votedWishIds));
+                renderWishlist();
             }
         }
 
-        function renderWishes() {
-            const list = document.getElementById('wishList');
-            const sorted = [...wishes].sort((a, b) => b.votes - a.votes);
-            list.innerHTML = sorted.map(w => {
+        function renderWishlist() {
+            const container = document.getElementById('wishlistContainer');
+            const sorted = [...wishlist].sort((a, b) => b.votes - a.votes);
+            container.innerHTML = sorted.map(w => {
                 const hasVoted = votedWishIds.includes(w.id);
+                let actionHtml = '';
+                if (w.isMine) {
+                    // 住戶自己許願的項目：不顯示「已敲碗」按鈕
+                    actionHtml = `<span class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">🌟 我的許願 (${w.votes})</span>`;
+                } else if (hasVoted) {
+                    actionHtml = `<button disabled class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200 text-slate-600 cursor-not-allowed">✅ 已敲碗 (${w.votes})</button>`;
+                } else {
+                    actionHtml = `<button onclick="voteWish('${w.id}')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 transition">🥣 +1 敲碗 (${w.votes})</button>`;
+                }
+
                 return `
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex justify-between items-center gap-3">
-                        <div>
-                            <p class="font-bold text-slate-800 text-sm">${w.item}</p>
-                            <p class="text-xs text-slate-500 mt-0.5">${w.note || '住戶許願希望團主開團！'}</p>
-                        </div>
-                        <button type="button" onclick="voteWish(${w.id})" ${hasVoted ? 'disabled' : ''} 
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${hasVoted ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'}">
-                            ${hasVoted ? `✅ 已敲碗 (${w.votes})` : `🙋 +1 敲碗 (${w.votes})`}
-                        </button>
+                <div class="py-3.5 flex items-center justify-between gap-4">
+                    <div>
+                        <p class="font-bold text-slate-900 text-sm">${w.name}</p>
+                        <p class="text-xs text-slate-500 mt-0.5">${w.reason}</p>
                     </div>
-                `;
+                    ${actionHtml}
+                </div>`;
             }).join('');
         }
 
-        // 後台 AI 敲碗排行與策略建議
-        function renderAdminWishInsights() {
-            const sorted = [...wishes].sort((a, b) => b.votes - a.votes);
-            const rankingEl = document.getElementById('adminWishRanking');
-            const adviceEl = document.getElementById('adminAiAdvice');
+        function switchRole(role) {
+            const buyerView = document.getElementById('buyerView');
+            const adminView = document.getElementById('adminView');
+            const navBuyer = document.getElementById('navBuyer');
+            const navAdmin = document.getElementById('navAdmin');
 
-            if (sorted.length === 0) {
-                rankingEl.innerText = '目前尚無住戶敲碗資料';
-                adviceEl.innerText = '';
-                return;
-            }
-
-            rankingEl.innerText = '熱門敲碗榜：' + sorted.slice(0, 3).map((w, idx) => `第${idx + 1}名【${w.item}】(${w.votes}票)`).join(' ｜ ');
-            const top1 = sorted[0];
-            adviceEl.innerText = `🤖 AI 選品與採購建議：熱門第 1 名「${top1.item}」累積 ${top1.votes} 票需求強烈（住戶備註：${top1.note || '人氣許願'}），建議尋找雙北區域可冷藏直送之優質店家洽談下期開團！`;
-        }
-
-        function toggleStatus(id, type) {
-            orders = orders.map(o => o.id === id ? { ...o, [type]: !o[type] } : o);
-            updateUI();
-        }
-
-        function sendArrivalNotice(name, notifyMethod) {
-            alert(`【發送到貨提醒】\n已透過「${notifyMethod}」發送通知給 ${name}：\n「您訂購的美食商品已抵達管理室，請抽空前來領取！」`);
-        }
-
-        function deleteOrder(id) {
-            if (confirm('確定要刪除這筆跟團紀錄嗎？')) {
-                orders = orders.filter(o => o.id !== id);
-                updateUI();
+            if (role === 'buyer') {
+                buyerView.classList.remove('hidden');
+                adminView.classList.add('hidden');
+                navBuyer.className = 'px-4 py-1.5 rounded-md text-sm font-semibold bg-white text-slate-900 shadow-sm transition';
+                navAdmin.className = 'px-4 py-1.5 rounded-md text-sm font-semibold text-slate-200 hover:text-white transition';
+            } else {
+                buyerView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+                navAdmin.className = 'px-4 py-1.5 rounded-md text-sm font-semibold bg-white text-slate-900 shadow-sm transition';
+                navBuyer.className = 'px-4 py-1.5 rounded-md text-sm font-semibold text-slate-200 hover:text-white transition';
+                renderAdmin();
             }
         }
 
-        function copyLineSummary() {
-            let text = `【社區美食團購 - 到貨通知與領貨清單】\n`;
-            text += `取貨地點：社區管理室前\n`;
-            text += `------------------------------\n`;
-            
-            orders.forEach(o => {
-                const statusPaid = o.paid ? '已付' : '未付';
-                const statusPicked = o.picked ? '已領' : '待領';
-                text += `• ${o.name}：${o.details} / [${statusPaid}] / [${statusPicked}]\n`;
-            });
-            text += `------------------------------\n請大家抽空前來領取，感謝合作！`;
-            navigator.clipboard.writeText(text);
-            alert('已成功複製廣播格式文字！可直接貼至社區 LINE 群組。');
+        function renderAdmin() {
+            document.getElementById('statOrders').textContent = `${orders.length} 筆`;
+            const rev = orders.reduce((sum, o) => sum + o.total, 0);
+            document.getElementById('statRevenue').textContent = `$${rev}`;
+
+            const topWish = [...wishlist].sort((a, b) => b.votes - a.votes)[0];
+            document.getElementById('statTopWish').textContent = topWish ? `${topWish.name} (${topWish.votes} 票)` : '尚無資料';
+
+            const aiBox = document.getElementById('aiInsightBox');
+            aiBox.innerHTML = `
+                <p>• <strong>庫存與成團預警：</strong>「台南老字號手炒黑糖鮮奶露」已達 90% 成團門檻（27/30 份），建議發送社區公告提醒最後 3 份名額，預計今日即可向廠商下單。</p>
+                <p class="mt-1.5">• <strong>下期選品推薦：</strong>根據鄰里許願池數據，<strong>「${topWish ? topWish.name : '彰化不二坊蛋黃酥'}」</strong>累積最高需求度（${topWish ? topWish.votes : 14} 人集氣），建議列為下週首選開團品項，預估首波可創下 25 份以上訂單。</p>
+            `;
+
+            const list = document.getElementById('adminOrderList');
+            if (orders.length === 0) {
+                list.innerHTML = '<p class="text-slate-400 py-4 text-center">目前尚無住戶訂單紀錄</p>';
+            } else {
+                list.innerHTML = orders.map(o => `
+                <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">${o.id}</span>
+                        <span class="font-bold text-slate-900 ml-1">${o.name}</span>
+                        <span class="text-xs text-slate-500">(${o.unit} · ${o.time})</span>
+                        <p class="text-xs text-slate-600 mt-1">${o.items.join('、')}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-mono">代碼: ${o.promo}</span>
+                        <p class="font-extrabold text-slate-900 mt-0.5">$${o.total}</p>
+                    </div>
+                </div>`).join('');
+            }
         }
 
-        updateUI();
+        function clearDemoData() {
+            if (confirm('確定要清除所有測試訂單與許願紀錄並恢復預設值嗎？')) {
+                localStorage.removeItem('gb_orders');
+                localStorage.removeItem('gb_wishlist');
+                localStorage.removeItem('gb_voted_wishes');
+                location.reload();
+            }
+        }
+
+        renderProducts();
+        renderCart();
+        renderWishlist();
     </script>
 </body>
 </html>
