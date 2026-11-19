@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好禮抽獎機 - 社區嘉年華</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans pb-10">
+    <!-- 頂部 Header -->
+    <header class="bg-slate-800 text-white py-5 shadow-md">
+        <div class="max-w-2xl mx-auto px-4">
+            <span class="bg-amber-500 text-slate-900 font-bold text-xs px-2.5 py-1 rounded">Gather Town 好禮抽獎攤位</span>
+            <h1 class="text-xl sm:text-2xl font-bold mt-1.5 tracking-tight">🎟️ 幸福社區團購折價券轉盤</h1>
+            <p class="text-slate-300 text-xs mt-1">抽出專屬折扣碼後，請前往右側電腦前面進入「社區團購網」使用！</p>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 mt-6">
+        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200 text-center space-y-4">
+            <div class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">
+                每人限抽一次 ｜ 最高現折 $50
+            </div>
+            <h2 class="text-xl font-bold text-slate-900">試試手氣抽團購折價券</h2>
+            <p class="text-xs text-slate-500">點擊下方按鈕立即抽出您的專屬回饋折扣碼，結帳時輸入即可折抵！</p>
+
+            <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl py-8 px-4 my-4">
+                <div id="lotteryDisplay" class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-wider">
+                    🎁 準備好試試手氣了嗎？
+                </div>
+            </div>
+
+            <button id="drawBtn" onclick="spinLottery()" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold px-8 py-3 rounded-lg shadow transition">
+                立即抽獎
+            </button>
+
+            <!-- 抽獎結果卡片 -->
+            <div id="lotteryResult" class="hidden bg-emerald-50 border border-emerald-200 rounded-lg p-5 mt-4 space-y-3">
+                <p class="text-base font-bold text-emerald-800">🎉 恭喜抽中「社區嘉年華 50 元折價券」！</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="bg-white border border-emerald-300 px-4 py-1.5 rounded font-mono font-bold text-lg text-slate-900">GB50</span>
+                    <button onclick="copyCode('GB50')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded transition">
+                        一鍵複製折扣碼
+                    </button>
+                </div>
+                <div class="bg-white/80 rounded p-2.5 border border-emerald-200">
+                    <p class="text-xs font-bold text-slate-800">👉 下一步指引：請關閉此視窗，走到右側電腦前面進入「社區團購網」，在折扣碼欄位貼上 <span class="font-mono text-emerald-700">GB50</span> 即可折抵 $50！</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function spinLottery() {
+            const btn = document.getElementById('drawBtn');
+            const display = document.getElementById('lotteryDisplay');
+            btn.disabled = true;
+            btn.innerText = '抽獎中...';
+
+            const prizes = ['🎲 銘謝惠顧...', '🎫 折價 $20...', '🎊 50元折價券！'];
+            let step = 0;
+            const timer = setInterval(() => {
+                display.innerText = prizes[step % prizes.length];
+                step++;
+                if (step > 8) {
+                    clearInterval(timer);
+                    display.innerText = '🎊 頭獎：50 元折價券！';
+                    document.getElementById('lotteryResult').classList.remove('hidden');
+                    btn.innerText = '已完成抽獎';
+                    btn.className = 'w-full sm:w-auto bg-slate-300 text-slate-600 font-bold px-8 py-3 rounded-lg cursor-not-allowed';
+                }
+            }, 120);
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code);
+            alert(`已複製折價券代碼【${code}】！\n請關閉此視窗，前往右側電腦前面進入「社區團購網」貼上使用。`);
+        }
+    </script>
+</body>
+</html>
