@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>限量快閃競標 - 社區嘉年華</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans pb-10">
+    <!-- 頂部 Header -->
+    <header class="bg-slate-800 text-white py-5 shadow-md">
+        <div class="max-w-2xl mx-auto px-4">
+            <span class="bg-rose-500 text-white font-bold text-xs px-2.5 py-1 rounded">Gather Town 限量競標攤位</span>
+            <h1 class="text-xl sm:text-2xl font-bold mt-1.5 tracking-tight">🔨 限量美食快閃競標</h1>
+            <p class="text-slate-300 text-xs mt-1">成功得標並複製專屬認領碼後，請前往右側電腦前面進入「社區團購網」使用！</p>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 mt-6">
+        <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200 space-y-5">
+            <div class="flex justify-between items-start gap-4">
+                <div>
+                    <span class="bg-rose-100 text-rose-700 text-xs font-bold px-2.5 py-0.5 rounded">最後 1 份 ｜ 限量搶標</span>
+                    <h2 class="text-xl font-bold text-slate-900 mt-1.5">限量大湖草莓起司塔 (特選版)</h2>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">嚴選特大號大湖草莓搭配北海道半熟乳酪，社區嘉年華限定限量 1 份，出價達標立即鎖定得標資格！</p>
+                </div>
+                <div class="text-right bg-slate-100 px-3.5 py-2 rounded-lg border border-slate-200 shrink-0">
+                    <p class="text-xs text-slate-500">目前最高出價</p>
+                    <p id="currentBidPrice" class="text-xl font-extrabold text-rose-600">$150</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                <p class="text-xs font-semibold text-slate-700">點擊下方按鈕立即加價搶標（出價 $180 即直接得標）：</p>
+                <button id="bidBtn180" onclick="placeBid(180)" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-lg text-sm transition shadow-sm">
+                    🔨 出價 $180（立即直購得標）
+                </button>
+            </div>
+
+            <!-- 競標得標結果卡片 -->
+            <div id="bidResult" class="hidden bg-amber-50 border border-amber-300 rounded-lg p-5 space-y-3 text-center">
+                <p class="text-base font-bold text-amber-900">🏆 恭喜您成功得標！請複製下方專屬認領碼：</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="bg-white border border-amber-400 px-4 py-1.5 rounded font-mono font-bold text-lg text-slate-900">BID-180</span>
+                    <button onclick="copyCode('BID-180')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded transition">
+                        一鍵複製認領碼
+                    </button>
+                </div>
+                <div class="bg-white/80 rounded p-2.5 border border-amber-200">
+                    <p class="text-xs font-bold text-slate-800">👉 下一步指引：請關閉此視窗，走到右側電腦前面進入「社區團購網」，在折扣碼欄位貼上 <span class="font-mono text-rose-600">BID-180</span> 即可認領結帳！</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function placeBid(amount) {
+            document.getElementById('currentBidPrice').innerText = `$${amount}`;
+            document.getElementById('bidResult').classList.remove('hidden');
+            const btn = document.getElementById('bidBtn180');
+            btn.disabled = true;
+            btn.innerText = '✅ 您已成功得標此商品';
+            btn.className = 'w-full bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg text-sm cursor-not-allowed';
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code);
+            alert(`已複製競標得標碼【${code}】！\n請關閉此視窗，前往右側電腦前面進入「社區團購網」貼上使用。`);
+        }
+    </script>
+</body>
+</html>
