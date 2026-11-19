@@ -17,11 +17,28 @@
                 <p class="text-slate-300 text-xs sm:text-sm mt-0.5">嚴選熱門排隊美食 ｜ 專屬社區免費直送 ｜ 取貨地點：社區管理室前</p>
             </div>
             <!-- 切換角色按鈕 -->
-            <button onclick="toggleAdminView()" id="adminToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition">
+            <button onclick="toggleAdminView()" id="adminToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition shrink-0">
                 團主登入
             </button>
         </div>
     </header>
+
+    <!-- [新增] 網頁內嵌團主密碼登入框（取代被 Gather Town 封鎖的 prompt()） -->
+    <div id="adminLoginBar" class="hidden bg-slate-900 border-b border-slate-700 text-white py-3 px-4 shadow-inner">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-end gap-2">
+            <span class="text-xs text-slate-300">請輸入團主管理密碼 (預設 1234)：</span>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <input type="password" id="adminPwdInput" onkeydown="if(event.key==='Enter') verifyAdminLogin()" placeholder="輸入密碼" class="flex-1 sm:w-36 bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-emerald-400">
+                <button type="button" onclick="verifyAdminLogin()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded transition whitespace-nowrap">
+                    確認登入
+                </button>
+                <button type="button" onclick="closeAdminLoginBar()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs px-2.5 py-1.5 rounded transition">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+
     <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
         <!-- 住戶跟團下單區 (前台) -->
         <section class="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
@@ -58,7 +75,7 @@
                 <!-- 複選多品項區 -->
                 <div class="border-t border-slate-100 pt-4 space-y-4">
                     <label class="block text-sm font-semibold text-slate-700">選擇團購品項：</label>
-                    <!-- [圖三修改] 社區嘉年華 競標得標解鎖品項 (輸入 BID-180 後顯示) -->
+                    <!-- 社區嘉年華 競標得標解鎖品項 (輸入 BID-180 後顯示) -->
                     <div id="bidUnlockedBanner" class="hidden bg-amber-50 p-4 rounded-lg border-2 border-dashed border-amber-400 flex justify-between items-center">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -214,7 +231,7 @@
                         </select>
                     </div>
                 </div>
-                <!-- [圖一修改] 刪掉淺色 placeholder 提示字，並將 Gather Town 改為社區嘉年華 -->
+                <!-- 統一優惠折扣碼 / 競標得標認領碼輸入框 -->
                 <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
                     <label for="promoCodeInput" class="block text-sm font-semibold text-slate-700">
                         優惠折扣碼 / 競標得標認領碼 <span class="text-xs font-normal text-slate-500">(於社區嘉年華取得)</span>
@@ -578,28 +595,45 @@
             updateUI();
             alert('已成功登記跟團預購！感謝您的支持。');
         });
-        // 團主密碼驗證登入 (預設密碼 1234)
+
+        // [修改] 改用網頁內嵌密碼輸入條，避免被 Gather Town iframe 封鎖 prompt()
         function toggleAdminView() {
             if (isAdmin) {
                 logoutAdmin();
                 return;
             }
-            const pwd = prompt('請輸入團主管理密碼 (預設：1234)：');
+            const loginBar = document.getElementById('adminLoginBar');
+            const pwdInput = document.getElementById('adminPwdInput');
+            loginBar.classList.remove('hidden');
+            pwdInput.value = '';
+            pwdInput.focus();
+        }
+        function closeAdminLoginBar() {
+            document.getElementById('adminLoginBar').classList.add('hidden');
+            document.getElementById('adminPwdInput').value = '';
+        }
+        function verifyAdminLogin() {
+            const pwd = document.getElementById('adminPwdInput').value.trim();
             if (pwd === '1234') {
                 isAdmin = true;
+                closeAdminLoginBar();
                 document.getElementById('adminSection').classList.remove('hidden');
                 document.getElementById('adminToggleBtn').innerText = '退出團主模式';
-                document.getElementById('adminToggleBtn').className = 'bg-rose-700 hover:bg-rose-600 text-white text-xs px-3 py-2 rounded transition';
-            } else if (pwd !== null) {
-                alert('密碼錯誤！');
+                document.getElementById('adminToggleBtn').className = 'bg-rose-700 hover:bg-rose-600 text-white text-xs px-3 py-2 rounded transition shrink-0';
+                document.getElementById('adminSection').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('密碼錯誤！(預設密碼為 1234)');
+                document.getElementById('adminPwdInput').focus();
             }
         }
         function logoutAdmin() {
             isAdmin = false;
+            closeAdminLoginBar();
             document.getElementById('adminSection').classList.add('hidden');
             document.getElementById('adminToggleBtn').innerText = '團主登入';
-            document.getElementById('adminToggleBtn').className = 'bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition';
+            document.getElementById('adminToggleBtn').className = 'bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs px-3 py-2 rounded border border-slate-600 transition shrink-0';
         }
+
         // 發送評價
         function addReview(e) {
             e.preventDefault();
@@ -625,7 +659,7 @@
                 `;
             }).join('');
         }
-        // [圖二修改] 住戶敲碗許願池功能：自己新增的許願標記 isMine: true，不顯示「已敲碗」按鈕
+        // 住戶敲碗許願池功能
         function addWish(e) {
             e.preventDefault();
             const item = document.getElementById('wishItemInput').value.trim();
